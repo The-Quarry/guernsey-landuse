@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guernsey new homes from old buildings | The Quarry</title>
+<meta name="description" content="Every Guernsey planning application since 2015 to turn a packing shed, barn or other old building into a home, or to replace one with a house, mapped month by month.">
+<meta property="og:title" content="New homes from old buildings">
+<meta property="og:description" content="Packing sheds, barns and outbuildings turned into homes in Guernsey since 2015, from the States planning register.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: yellow masthead band, then a map + timeline workbench, then the year chart, parish table and method. */
+:root{
+  --brand:#f8fd98; --green:#60A07D; --green-ink:#2f6b4c; --refused:#c2412f; --muted-dot:#9a9a90;
+  --bg:#ffffff; --panel:#ffffff; --ink:#141412; --muted:#5d5d56; --line:#e3e3db; --land:#f4f4ec; --land-line:#cfcfc2; --sea:#eef3f1;
+  --display:"Space Grotesk", "Poppins", system-ui, sans-serif;
+  --body:"Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141513; --panel:#1b1c1a; --ink:#f1f1ea; --muted:#a9a99f; --line:#33342f; --land:#23241f; --land-line:#45463e; --sea:#171a19;
+  --green-ink:#8fc7a6; --muted-dot:#77776e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141513; --panel:#1b1c1a; --ink:#f1f1ea; --muted:#a9a99f; --line:#33342f; --land:#23241f; --land-line:#45463e; --sea:#171a19;
+  --green-ink:#8fc7a6; --muted-dot:#77776e; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--green-ink)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.mast{background:var(--brand);color:#141412;border-bottom:1px solid #141412}
+.mast .wrap{padding-block:28px 24px;display:grid;gap:10px}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
+.mast h1{font-size:clamp(30px,5vw,52px);line-height:1.02;letter-spacing:-.01em}
+.stand{max-width:62ch;font-size:16px;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:6px}
+.stat b{display:block;font:700 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px}
+main .wrap{padding-block:22px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:34px}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.bench > *{min-width:0}
+.mapbox{position:relative;border:1px solid var(--line);border-radius:6px;background:var(--sea);overflow:hidden;touch-action:none}
+#map{display:block;width:100%;height:auto;aspect-ratio:1/1.02;max-height:78vh;cursor:grab}
+#map.drag{cursor:grabbing}
+.parish{fill:var(--land);stroke:var(--land-line);stroke-width:.6;vector-effect:non-scaling-stroke}
+.plabel{font:600 9px var(--body);fill:var(--ink);opacity:.7;text-anchor:middle;pointer-events:none;letter-spacing:.04em;text-transform:uppercase;paint-order:stroke;stroke:var(--land);stroke-width:3px;stroke-linejoin:round}
+.dot{stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .25s}
+.dot.sel{stroke:var(--ink)!important;stroke-width:2.5}
+.ring{fill:none;stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:none}
+.zoom{position:absolute;right:10px;top:10px;display:grid;gap:4px}
+.zoom button{width:32px;height:32px;font:600 18px/1 var(--body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;cursor:pointer}
+.monthbig{position:absolute;left:12px;top:10px;font:700 26px/1 var(--display);font-variant-numeric:tabular-nums;pointer-events:none}
+.monthbig small{display:block;font:500 12px/1.3 var(--body);color:var(--muted);margin-top:4px}
+.side{display:grid;gap:16px}
+.panel{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:14px}
+.panel h3{font-size:15px;margin-bottom:8px}
+.controls{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{font:600 13px var(--body);border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:4px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{font:500 12.5px var(--body);border:0;background:transparent;color:var(--ink);padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#141412}
+input[type=range]{width:100%;accent-color:var(--green)}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.legend{display:grid;gap:6px;font-size:13px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:-1px;border:1.5px solid transparent}
+.count{font-size:13px;color:var(--muted)}
+.count b{color:var(--ink);font-variant-numeric:tabular-nums}
+.card dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:8px 0;font-size:13.5px}
+.card dt{color:var(--muted)}
+.card dd{margin:0}
+.card .empty{color:var(--muted);font-size:13.5px;margin:0}
+.moments{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;max-height:430px;overflow-y:auto}
+.moments button{all:unset;display:block;cursor:pointer;padding:7px 8px;border-radius:4px;font-size:13.5px;line-height:1.4}
+.moments button:hover,.moments button.on{background:color-mix(in srgb,var(--brand) 55%,transparent)}
+.moments time{display:block;font:600 11.5px var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.moments .src{font-size:12px;color:var(--muted)}
+section h2{font-size:22px;margin-bottom:6px}
+section > p.lead{margin:0 0 14px;max-width:70ch;color:var(--muted)}
+.chartbox{overflow-x:auto}
+#chart{display:block;width:100%;min-width:640px;height:auto}
+#chart text{font-family:var(--body);fill:var(--muted)}
+#chart .val{fill:var(--ink);font-weight:600}
+.ptable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.ptable th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
+.ptable td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.ptable td.n{text-align:right;width:70px}
+.bar{height:10px;background:var(--green);border-radius:2px}
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px;font-size:14px}
+.method h3{font-size:15px;margin-bottom:4px}
+.method p{margin:0 0 6px;color:var(--muted)}
+.sources{font-size:13.5px;color:var(--muted);columns:2 300px;margin:0;padding-left:18px}
+.sources li{margin-bottom:4px;break-inside:avoid}
+footer .wrap{padding-block:18px 30px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.dot{transition:none}}
+.leaflet-container{font:inherit;background:var(--sea)}
+#map{display:block;width:100%;height:min(78vh,720px);min-height:420px;cursor:grab}
+.monthbig{z-index:500}
+.leaflet-control-zoom a{color:var(--ink)!important;background:var(--panel)!important}
+body.embed .mast,body.embed section,body.embed footer{display:none}
+body.embed main .wrap{padding-block:10px}
+.fullpage{display:none;font-size:13px;font-weight:600}
+body.embed .fullpage{display:inline}
+.card .desc{margin:6px 0 8px;font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12.5px var(--body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);color:#141412;border-color:#141412}
+.chip .n{opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
+.tagline{font-size:12.5px;color:var(--muted)}
+.series{font-size:13px;font-weight:600;color:#141412}
+#chart .ln{fill:none;stroke-width:2.5}
+.lkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 8px}
+.lkey i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:6px;border-radius:2px}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="eyebrow"><a class="series" href="../">The Quarry · Guernsey land use</a></div>
+    <h1>New homes from old buildings</h1>
+    <p class="stand">Every planning application in Guernsey since 2015 to turn a packing shed, barn or outbuilding into a home, or to knock one down and build a house in its place, taken from the States planning register and mapped month by month.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="bench">
+      <div class="mapbox" id="mapbox">
+        <div id="map" role="region" aria-label="Map of Guernsey showing applications to turn old buildings into homes"></div>
+        <div class="monthbig" id="monthbig"></div>
+      </div>
+
+      <div class="side">
+        <div class="panel controls"><a class="fullpage" href="./" target="_blank" rel="noopener">Open the full page with the charts and method</a>
+          <div class="row">
+            <button type="button" class="btn" id="play">Play</button>
+            <div class="seg" role="group" aria-label="What to show">
+              <button type="button" id="modeCum" aria-pressed="true">All up to this month</button>
+              <button type="button" id="modeYear" aria-pressed="false">Past 12 months</button>
+            </div>
+          </div>
+          <div class="chips" id="chips" role="group" aria-label="Type of change"></div>
+          <label for="slider" class="count" id="countline"></label>
+          <input type="range" id="slider" min="0" max="141" value="141">
+          <div class="ticks"><span>2015</span><span>2018</span><span>2021</span><span>2024</span><span>2026</span></div>
+          <div class="legend">
+            <span><i style="background:var(--green)"></i>Granted</span>
+            <span><i style="background:var(--refused)"></i>Refused</span>
+            <span><i style="background:var(--muted-dot)"></i>Withdrawn or still pending</span>
+            <span style="color:var(--muted)">Building types overlap: a packing shed on a farm counts under both.</span>
+          </div>
+        </div>
+
+        <div class="panel card" id="card"><h3>Selected application</h3><p class="empty">Tap a dot to see the application.</p></div>
+
+        <div class="panel">
+          <h3>What happened when</h3>
+          <ul class="moments" id="moments"></ul>
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Applications each year, by type</h2>
+      <p class="lead" id="chartlead"></p>
+      <div class="lkey" id="lkey"></div>
+      <div class="chartbox"><svg id="chart" role="img" aria-label="Line chart of applications per year by type"></svg></div>
+    </section>
+
+    <section>
+      <h2>Where the changes are</h2>
+      <p class="lead">Applications granted since the Island Development Plan took effect (November 2016 onwards), by parish, with the number of homes they allow. Most are in the north, where the island's vineries were concentrated.</p>
+      <table class="ptable" id="ptable"></table>
+    </section>
+
+    <section>
+      <h2>How this map was made</h2>
+      <div class="method">
+        <div>
+          <h3>The applications</h3>
+          <p id="m-source"></p>
+          <p>Each description was read for two kinds of change: converting an existing building that was not a home (a packing shed, barn, stable, store or outbuilding) into one or more homes, and demolishing such a building to put up a house or flats in its place. Building a new house next to a working shed, converting an outbuilding into an annexe for an existing house, and replacing one house with another are all left out. Amendments to earlier approvals are left out so the same scheme isn't counted twice. Former hotels and self-catering units are on the hotels map instead.</p>
+          <p>The sorting is done on the wording of each description. A random check of 25 included applications found one that may not belong (a boiler house converted to a store as part of a wider scheme). Treat individual counts as close rather than exact.</p>
+        </div>
+        <div>
+          <h3>Homes</h3>
+          <p>The number of homes comes from the description where it gives one ("convert agricultural building to 4 dwellings"). Where it doesn't, the application is counted as one home. A permission is not proof the home was built: some lapse, and the same site often appears more than once as schemes are revised.</p>
+        </div>
+        <div>
+          <h3>Dates and outcomes</h3>
+          <p>Each application appears in the month it was validated, not the month it was decided. The outcome is its status on the register now, so recent months include applications still pending.</p>
+        </div>
+        <div>
+          <h3>Locations</h3>
+          <p id="m-loc"></p>
+        </div>
+        <div>
+          <h3>Sources</h3>
+          <ol class="sources">
+            <li><a href="data/new-homes-from-old-buildings-2015-2026.csv" download>Download the data (CSV)</a></li>
+            <li>States of Guernsey planning register, <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet" target="_blank" rel="noopener">Planning Applications Websearch</a></li>
+            <li>States of Guernsey Digimap: planning site boundaries and land parcels</li>
+            <li><a href="https://guernseypress.com/news/2018/08/16/appeal-fails-but-redundant-glasshouses-to-be-re-defined" target="_blank" rel="noopener">Appeal fails but redundant glasshouses to be re-defined</a>, Guernsey Press, 16 Aug 2018</li>
+            <li><a href="https://guernseypress.com/news/2022/08/20/bordeaux-vinery-could-become-five-homes" target="_blank" rel="noopener">Bordeaux Vinery could become five homes</a>, Guernsey Press, 20 Aug 2022</li>
+            <li><a href="https://guernseypress.com/news/2023/04/14/derelict-glasshouse-sites-ripe-for-housing" target="_blank" rel="noopener">Derelict glasshouse sites ripe for housing</a>, Guernsey Press, 14 Apr 2023</li>
+            <li><a href="https://www.collascrill.com/articles/collas-crill-explains-the-island-development-plan-review-part-1/" target="_blank" rel="noopener">Collas Crill explains the Island Development Plan review</a>, Collas Crill</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap">Data collected from the States of Guernsey planning register on 3 November 2026. Part of <a href="../">Guernsey land use</a> from The Quarry.</div></footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(async function(){
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let embedded = new URLSearchParams(location.search).has('embed');
+try { embedded = embedded || window.self !== window.top; } catch (e) { embedded = true; }
+document.body.classList.toggle('embed', embedded);
+
+const D = await fetch('data/oldbuildings-data.json').then(r => r.json());
+const apps = D.items.map(i => ({...i, parish: (i.parish || '').replace(/^St\. /, 'St ')}));
+const monthTotals = D.months;
+const TYPES = [['conv', 'Converted to a home'], ['rebuild', 'Knocked down, house built'], ['vinery', 'Packing sheds and vinery buildings'], ['farm', 'Barns and farm buildings']];
+const TYPE_COLOUR = {conv: '#60A07D', rebuild: '#c98a1b', vinery: '#2d6f9a', farm: '#8a5a3c'};
+
+// ---------- months ----------
+const months = []; for (let y = 2015, m = 1; y < 2026 || (y === 2026 && m <= 10); ) { months.push(`${y}-${String(m).padStart(2,'0')}`); if (++m === 13) { m = 1; y++; } }
+const mi = Object.fromEntries(months.map((m, i) => [m, i]));
+const monthName = k => { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 15).toLocaleDateString('en-GB', {month:'long', year:'numeric'}); };
+const shortMonth = k => { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 15).toLocaleDateString('en-GB', {month:'short', year:'numeric'}); };
+const nf = n => n.toLocaleString('en-GB');
+const IDP = '2016-11';
+const yearTotal = y => Object.entries(monthTotals).filter(([k]) => k.startsWith(y)).reduce((s, [, v]) => s + v, 0);
+
+// ---------- headline stats ----------
+const years = [...new Set(apps.map(a => a.m.slice(0, 4)))].sort();
+const byYear = Object.fromEntries(years.map(y => [y, {n: 0, conv: 0, rebuild: 0, vinery: 0, farm: 0, g: 0, r: 0, u: 0}]));
+for (const a of apps) { const o = byYear[a.m.slice(0, 4)]; o.n++; if (a.o === 'g') { o.g++; o.u += a.u; } if (a.o === 'r') o.r++; for (const t of a.tags) if (t in o) o[t]++; }
+const per1000 = y => 1000 * byYear[y].n / yearTotal(y);
+const fullYears = years.filter(y => y !== '2026');
+const peak = fullYears.reduce((b, y) => per1000(y) > per1000(b) ? y : b, fullYears[0]);
+const since = apps.filter(a => a.m >= IDP);
+const granted = apps.filter(a => a.o === 'g').length, decided = apps.filter(a => a.o === 'g' || a.o === 'r').length;
+const count = t => apps.filter(a => a.tags.includes(t)).length;
+const pre = apps.filter(a => a.m < IDP), post = apps.filter(a => a.m >= IDP && a.m < '2018-09');
+const refusedPct = Math.round(100 * apps.filter(a => a.o === 'r').length / decided);
+const homes = apps.filter(a => a.o === 'g').reduce((s, a) => s + a.u, 0);
+$('stats').innerHTML = [
+  [nf(apps.length), 'applications since January 2015'],
+  [nf(homes), 'homes granted'],
+  [pre.length + ' → ' + post.length, 'in the 22 months before the 2016 plan, and the 22 after'],
+  [refusedPct + '%', 'of decided applications refused']
+].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+const totalApps = Object.values(monthTotals).reduce((s, v) => s + v, 0);
+$('m-source').textContent = `The States planning register was searched month by month for every application validated from January 2015 to October 2026: ${nf(totalApps)} applications in all. ${nf(apps.length)} of them turn an old building into one or more homes, or replace one with a house.`;
+const nb = apps.filter(a => a.src === 'b').length, np = apps.filter(a => a.src === 'p').length, nn = apps.filter(a => !a.lat).length;
+$('m-loc').textContent = `From 2020 the States draw a site boundary for each application, and ${nf(nb)} dots sit at the centre of that boundary, which is drawn when you select one. Before 2020 there are no boundaries, so ${nf(np)} dots sit at the centre of the land parcel or parcels listed against the property. A dot marks the property, not the exact building.${nn ? ` ${nn} applications could not be placed.` : ''}`;
+
+// ---------- map ----------
+const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' || document.documentElement.dataset.theme === 'dark';
+const map = L.map('map', {zoomControl: false, zoomSnap: 0.5, minZoom: 11, maxZoom: 19}).fitBounds([[49.405, -2.675], [49.512, -2.505]]);
+L.control.zoom({position: 'topright'}).addTo(map);
+L.tileLayer(`https://basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}.png?key=cb1_4rrh_1_787f5809ade6f105fa27d8a3`, {
+  maxZoom: 19, attribution: '&copy; OpenStreetMap contributors &copy; CARTO | Sites: States of Guernsey Digimap'}).addTo(map);
+const z0 = map.getZoom();
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const colour = a => css(a.o === 'g' ? '--green' : a.o === 'r' ? '--refused' : '--muted-dot');
+const radius = () => 3.2 * Math.pow(2, (map.getZoom() - z0) * 0.55);
+const located = apps.filter(a => a.lat);
+const dotLayer = L.layerGroup().addTo(map);
+let outline = null;
+for (const a of located) {
+  a.node = L.circleMarker([a.lat, a.lng], {radius: radius(), color: css('--bg'), weight: 1, fillColor: colour(a), fillOpacity: 0.85, bubblingMouseEvents: false})
+    .bindTooltip(esc(a.addr), {direction: 'top'}).on('click', () => select(a));
+}
+map.on('zoomend', () => { const r = radius(); for (const a of located) a.node.setRadius(r); });
+
+// ---------- filters ----------
+let typeFilter = '';
+const matches = a => !typeFilter || a.tags.includes(typeFilter);
+function drawChips(){
+  $('chips').innerHTML = [['', 'All changes', apps.length], ...TYPES.map(([k, l]) => [k, l, count(k)])]
+    .map(([k, l, n]) => `<button type="button" class="chip" data-k="${k}" aria-pressed="${typeFilter === k}">${l}<span class="n">${nf(n)}</span></button>`).join('');
+}
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; typeFilter = b.dataset.k; drawChips(); draw(); });
+drawChips();
+
+// ---------- time ----------
+let idx = months.length - 1, mode = 'cum', timer = null;
+function draw(){
+  const cur = months[idx], from = mode === 'cum' ? months[0] : months[Math.max(0, idx - 11)];
+  let shown = 0, g = 0;
+  for (const a of located) {
+    const on = a.m >= from && a.m <= cur && matches(a), has = dotLayer.hasLayer(a.node);
+    if (on && !has) dotLayer.addLayer(a.node); else if (!on && has) dotLayer.removeLayer(a.node);
+    if (on) { shown++; if (a.o === 'g') g++; const fresh = a.m === cur && timer; a.node.setStyle({weight: fresh ? 3 : 1, color: fresh ? css('--ink') : css('--bg')}); }
+  }
+  const all = apps.filter(a => a.m >= from && a.m <= cur && matches(a)).length;
+  const label = typeFilter ? {conv: 'to convert a building', rebuild: 'to knock down and build', vinery: 'involving a packing shed or vinery building', farm: 'involving a barn or farm building'}[typeFilter] : '';
+  $('monthbig').innerHTML = `${shortMonth(cur)}<small>${mode === 'cum' ? 'since January 2015' : 'past 12 months'}</small>`;
+  $('countline').innerHTML = `<b>${nf(all)}</b> applications ${label ? label + ' ' : ''}${mode === 'cum' ? 'from January 2015 to' : 'in the 12 months to'} ${monthName(cur)}, <b>${nf(g)}</b> granted${all > shown ? ` (${all - shown} not mappable)` : ''}`;
+  $('slider').value = idx;
+  document.querySelectorAll('.moments button').forEach(b => b.classList.toggle('on', b.dataset.m === cur));
+}
+$('slider').addEventListener('input', e => { idx = +e.target.value; stop(); draw(); });
+function stop(){ if (timer) { clearInterval(timer); timer = null; $('play').textContent = 'Play'; draw(); } }
+$('play').onclick = () => {
+  if (timer) return stop();
+  if (idx >= months.length - 1) idx = 0;
+  $('play').textContent = 'Pause';
+  timer = setInterval(() => { if (idx >= months.length - 1) return stop(); idx++; draw(); }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 400 : 160);
+  draw();
+};
+const setMode = m => { mode = m; $('modeCum').setAttribute('aria-pressed', m === 'cum'); $('modeYear').setAttribute('aria-pressed', m === 'year'); draw(); };
+$('modeCum').onclick = () => setMode('cum'); $('modeYear').onclick = () => setMode('year');
+
+// ---------- card ----------
+const TAGTEXT = {conv: 'Convert the building', rebuild: 'Demolish and build new', vinery: 'Packing shed or vinery building', farm: 'Barn or farm building'};
+function select(a){
+  if (outline) { map.removeLayer(outline); outline = null; }
+  if (a.ol) outline = L.polygon(a.ol, {color: css('--ink'), weight: 2, fill: false, dashArray: '4 3'}).addTo(map);
+  if (outline) map.fitBounds(outline.getBounds(), {maxZoom: 19, padding: [60, 60]}); else if (a.lat) map.setView([a.lat, a.lng], Math.max(map.getZoom(), 17));
+  const out = {g:'Granted', r:'Refused', w:'Withdrawn', p:'Pending or not yet decided'}[a.o];
+  $('card').innerHTML = `<h3>${esc(a.addr)}</h3>
+    <p class="desc">${esc(a.d)}</p>
+    <dl>
+      <dt>Reference</dt><dd>${esc(a.ref)}</dd>
+      <dt>Parish</dt><dd>${esc(a.parish)}</dd>
+      <dt>Registered</dt><dd>${monthName(a.m)}</dd>
+      <dt>Outcome</dt><dd>${out}</dd>
+      <dt>What</dt><dd>${a.tags.map(t => TAGTEXT[t]).filter(Boolean).join('; ')}</dd>
+      <dt>Homes</dt><dd>${a.u}</dd>
+      ${a.garden ? '<dt>Also</dt><dd>Also turns farmland into garden (on the <a href="../fields/">fields map</a>)</dd>' : ''}
+      <dt>Placed by</dt><dd>${a.src === 'b' ? 'States site boundary, outlined on the map' : 'Land parcel for the property'}</dd>
+    </dl>
+    <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">Full application on the States planning register</a>`;
+  if (matchMedia('(max-width:860px)').matches) $('card').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+// ---------- moments ----------
+const moments = [
+  ['2016-11', 'The Island Development Plan takes effect', 'The new plan sets out when redundant buildings and glasshouse sites outside the main centres can be reused. Applications to convert old buildings double over the following two years.', 'Collas Crill'],
+  ['2018-08', 'Tribunal rules on a redundant vinery', 'An appeal over industrial units on Dolphin Vinery in the Vale fails because the cleared site would contribute to open land. The planning director says the definition of a redundant glasshouse will be clarified.', 'Guernsey Press, 16 Aug 2018'],
+  ['2022-08', 'Bordeaux Vinery outbuildings', 'With the glasshouses cleared, plans go in to turn the remaining block outbuildings at Bordeaux Vinery into five one-bedroom homes. A scheme to replace them with five new houses follows in 2025.', 'Guernsey Press, 20 Aug 2022'],
+  ['2023-01', 'The plan\'s review begins', 'The Development & Planning Authority launches its review of the Island Development Plan.', 'Collas Crill'],
+  ['2023-04', 'Call to free derelict glasshouse sites', 'Deputy Steve Falla asks the States to ease the rules on building homes on former vineries, citing 75.5 hectares of derelict glass. The planning president urges caution.', 'Guernsey Press, 14 Apr 2023']
+];
+$('moments').innerHTML = moments.map(([m, t, d, s]) => `<li><button type="button" data-m="${m}"><time>${monthName(m)}</time><b>${t}</b><br>${d} <span class="src">${s}</span></button></li>`).join('');
+$('moments').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; stop(); idx = mi[b.dataset.m]; draw(); });
+
+// ---------- chart: applications per year by type ----------
+const ch = $('chart');
+const W = 900, H = 300, ML = 44, MR = 14, T = 22, B = 36;
+ch.setAttribute('viewBox', `0 0 ${W} ${H}`);
+const val = (y, t) => byYear[y][t];
+const maxV = Math.max(...years.flatMap(y => TYPES.map(([t]) => val(y, t))));
+const step = 5, top = Math.ceil(maxV / step) * step;
+const xS = i => ML + (W - ML - MR) * (i + 0.5) / years.length;
+const yS = v => T + (H - T - B) * (1 - v / top);
+for (let v = 0; v <= top; v += step) { el('line', {x1:ML, x2:W - MR, y1:yS(v), y2:yS(v), stroke:'var(--line)'}, ch); const t = el('text', {x:ML - 6, y:yS(v) + 4, 'text-anchor':'end', 'font-size':11, fill:'var(--muted)'}, ch); t.textContent = v; }
+years.forEach((y, i) => { const t = el('text', {x:xS(i), y:H - B + 18, 'text-anchor':'middle', 'font-size':12, fill:'var(--ink)'}, ch); t.textContent = y === '2026' ? '2026*' : y; });
+for (const [t] of TYPES) {
+  el('polyline', {points: years.map((y, i) => `${xS(i).toFixed(1)},${yS(val(y, t)).toFixed(1)}`).join(' '), class:'ln', stroke: TYPE_COLOUR[t]}, ch);
+  years.forEach((y, i) => el('circle', {cx:xS(i), cy:yS(val(y, t)), r:3, fill:TYPE_COLOUR[t]}, ch));
+}
+const mark = (m, label) => { const [yy, mm] = m.split('-').map(Number); const i = years.indexOf(String(yy)); if (i < 0) return; const x = xS(i) + (W - ML - MR) / years.length * ((mm - 0.5) / 12 - 0.5); el('line', {x1:x, x2:x, y1:T - 8, y2:H - B, stroke:'var(--ink)', 'stroke-dasharray':'3 3'}, ch); const tx = el('text', {x:x + 4, y:T - 10, 'font-size':11, class:'val'}, ch); tx.textContent = label; };
+mark('2016-11', 'Plan takes effect'); mark('2023-01', 'Review begins');
+$('lkey').innerHTML = TYPES.map(([t, l]) => `<span><i style="background:${TYPE_COLOUR[t]}"></i>${l}</span>`).join('');
+const refRate = t => { const x = apps.filter(a => a.tags.includes(t) && (a.o === 'g' || a.o === 'r')); return Math.round(100 * x.filter(a => a.o === 'r').length / x.length); };
+$('chartlead').textContent = `Applications registered each year. Conversions make up most of them, and they are refused more often than schemes that knock the old building down and start again: ${refRate('conv')}% of decided conversions were refused, against ${refRate('rebuild')}% of rebuilds. Barns and farm buildings fare worst, at ${refRate('farm')}%. *2026 runs to October.`;
+
+// ---------- parish table ----------
+const byP = {};
+for (const a of since) { if (a.o !== 'g') continue; const p = a.parish || 'Not known'; const o = (byP[p] ||= {n: 0, new: 0, hedge: 0}); o.n++; o.new += a.u; if (a.tags.includes('vinery')) o.hedge++; }
+const pRows = Object.entries(byP).sort((a, b) => b[1].n - a[1].n);
+const pMax = pRows[0][1].n;
+$('ptable').innerHTML = '<tr><th>Parish</th><th style="text-align:right">Granted</th><th style="text-align:right">Homes</th><th style="text-align:right">Vinery buildings</th><th></th></tr>' +
+  pRows.map(([p, o]) => `<tr><td>${p}</td><td class="n">${o.n}</td><td class="n">${o.new}</td><td class="n">${o.hedge}</td><td><div class="bar" style="width:${(100 * o.n / pMax).toFixed(1)}%"></div></td></tr>`).join('');
+
+draw();
+})();
+</script>
+</body>
+</html>
