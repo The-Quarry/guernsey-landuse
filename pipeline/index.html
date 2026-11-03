@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guernsey housing pipeline | The Quarry</title>
+<meta name="description" content="The 67 sites in the States of Guernsey Housing Site Availability Framework, their 1,741 potential homes, how far each has got and its planning history.">
+<meta property="og:title" content="Guernsey housing pipeline">
+<meta property="og:description" content="Where the 1,741 homes in the States housing pipeline stand, site by site.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: yellow masthead band, then a map + timeline workbench, then the year chart, parish table and method. */
+:root{
+  --brand:#f8fd98; --green:#60A07D; --green-ink:#2f6b4c; --refused:#c2412f; --muted-dot:#9a9a90;
+  --bg:#ffffff; --panel:#ffffff; --ink:#141412; --muted:#5d5d56; --line:#e3e3db; --land:#f4f4ec; --land-line:#cfcfc2; --sea:#eef3f1;
+  --display:"Space Grotesk", "Poppins", system-ui, sans-serif;
+  --body:"Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141513; --panel:#1b1c1a; --ink:#f1f1ea; --muted:#a9a99f; --line:#33342f; --land:#23241f; --land-line:#45463e; --sea:#171a19;
+  --green-ink:#8fc7a6; --muted-dot:#77776e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141513; --panel:#1b1c1a; --ink:#f1f1ea; --muted:#a9a99f; --line:#33342f; --land:#23241f; --land-line:#45463e; --sea:#171a19;
+  --green-ink:#8fc7a6; --muted-dot:#77776e; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--green-ink)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+.mast{background:var(--brand);color:#141412;border-bottom:1px solid #141412}
+.mast .wrap{padding-block:28px 24px;display:grid;gap:10px}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
+.mast h1{font-size:clamp(30px,5vw,52px);line-height:1.02;letter-spacing:-.01em}
+.stand{max-width:62ch;font-size:16px;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:6px}
+.stat b{display:block;font:700 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px}
+main .wrap{padding-block:22px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:34px}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
+.bench > *{min-width:0}
+.mapbox{position:relative;border:1px solid var(--line);border-radius:6px;background:var(--sea);overflow:hidden;touch-action:none}
+#map{display:block;width:100%;height:auto;aspect-ratio:1/1.02;max-height:78vh;cursor:grab}
+#map.drag{cursor:grabbing}
+.parish{fill:var(--land);stroke:var(--land-line);stroke-width:.6;vector-effect:non-scaling-stroke}
+.plabel{font:600 9px var(--body);fill:var(--ink);opacity:.7;text-anchor:middle;pointer-events:none;letter-spacing:.04em;text-transform:uppercase;paint-order:stroke;stroke:var(--land);stroke-width:3px;stroke-linejoin:round}
+.dot{stroke-width:1.2;vector-effect:non-scaling-stroke;cursor:pointer;transition:opacity .25s}
+.dot.sel{stroke:var(--ink)!important;stroke-width:2.5}
+.ring{fill:none;stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:none}
+.zoom{position:absolute;right:10px;top:10px;display:grid;gap:4px}
+.zoom button{width:32px;height:32px;font:600 18px/1 var(--body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;cursor:pointer}
+.monthbig{position:absolute;left:12px;top:10px;font:700 26px/1 var(--display);font-variant-numeric:tabular-nums;pointer-events:none}
+.monthbig small{display:block;font:500 12px/1.3 var(--body);color:var(--muted);margin-top:4px}
+.side{display:grid;gap:16px}
+.panel{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:14px}
+.panel h3{font-size:15px;margin-bottom:8px}
+.controls{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn{font:600 13px var(--body);border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:4px;padding:7px 12px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{font:500 12.5px var(--body);border:0;background:transparent;color:var(--ink);padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#141412}
+input[type=range]{width:100%;accent-color:var(--green)}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.legend{display:grid;gap:6px;font-size:13px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:-1px;border:1.5px solid transparent}
+.count{font-size:13px;color:var(--muted)}
+.count b{color:var(--ink);font-variant-numeric:tabular-nums}
+.card dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:8px 0;font-size:13.5px}
+.card dt{color:var(--muted)}
+.card dd{margin:0}
+.card .empty{color:var(--muted);font-size:13.5px;margin:0}
+.moments{list-style:none;margin:0;padding:0 4px 0 0;display:grid;gap:2px;max-height:430px;overflow-y:auto}
+.moments button{all:unset;display:block;cursor:pointer;padding:7px 8px;border-radius:4px;font-size:13.5px;line-height:1.4}
+.moments button:hover,.moments button.on{background:color-mix(in srgb,var(--brand) 55%,transparent)}
+.moments time{display:block;font:600 11.5px var(--body);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.moments .src{font-size:12px;color:var(--muted)}
+section h2{font-size:22px;margin-bottom:6px}
+section > p.lead{margin:0 0 14px;max-width:70ch;color:var(--muted)}
+.chartbox{overflow-x:auto}
+#chart{display:block;width:100%;min-width:640px;height:auto}
+#chart text{font-family:var(--body);fill:var(--muted)}
+#chart .val{fill:var(--ink);font-weight:600}
+.ptable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.ptable th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
+.ptable td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.ptable td.n{text-align:right;width:70px}
+.bar{height:10px;background:var(--green);border-radius:2px}
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px;font-size:14px}
+.method h3{font-size:15px;margin-bottom:4px}
+.method p{margin:0 0 6px;color:var(--muted)}
+.sources{font-size:13.5px;color:var(--muted);columns:2 300px;margin:0;padding-left:18px}
+.sources li{margin-bottom:4px;break-inside:avoid}
+footer .wrap{padding-block:18px 30px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.dot{transition:none}}
+.leaflet-container{font:inherit;background:var(--sea)}
+#map{display:block;width:100%;height:min(78vh,720px);min-height:420px;cursor:grab}
+.monthbig{z-index:500}
+.leaflet-control-zoom a{color:var(--ink)!important;background:var(--panel)!important}
+body.embed .mast,body.embed section,body.embed footer{display:none}
+body.embed main .wrap{padding-block:10px}
+.fullpage{display:none;font-size:13px;font-weight:600}
+body.embed .fullpage{display:inline}
+.card .desc{margin:6px 0 8px;font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12.5px var(--body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);color:#141412;border-color:#141412}
+.chip .n{opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
+.tagline{font-size:12.5px;color:var(--muted)}
+.series{font-size:13px;font-weight:600;color:#141412}
+#chart .ln{fill:none;stroke-width:2.5}
+.lkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 8px}
+.lkey i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:6px;border-radius:2px}
+.st1{--c:#a9a796}.st2{--c:#d6a93c}.st3{--c:#e07f35}.st5{--c:#4f87c4}.st4{--c:#2f5f9e}.st6{--c:#60A07D}.st7{--c:#2f6b4c}
+.pill{display:inline-flex;align-items:center;gap:6px;font:500 12.5px var(--body);border-radius:999px;padding:3px 10px;background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid var(--c);color:var(--ink);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.track{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
+.hist{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;font-size:13px;max-height:260px;overflow-y:auto}
+.hist li{border-left:3px solid var(--line);padding-left:8px}
+.hist li.g{border-color:var(--green)}.hist li.r{border-color:var(--refused)}.hist li.p{border-color:#d6a93c}
+.hist time{font-weight:600;font-variant-numeric:tabular-nums}
+.photo{margin:8px 0;border-radius:4px;overflow:hidden;background:var(--sea)}
+.photo img{display:block;width:100%;height:auto}
+.photo figcaption{font-size:12px;color:var(--muted);padding:4px 0}
+.stackrow{display:grid;grid-template-columns:110px minmax(0,1fr) 60px;gap:10px;align-items:center;font-size:13.5px;margin-bottom:8px}
+.stack{display:flex;height:26px;border-radius:3px;overflow:hidden;background:var(--sea)}
+.stack span{background:var(--c);height:100%}
+.skey{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:4px 0 14px}
+.skey i{display:inline-block;width:12px;height:12px;border-radius:2px;background:var(--c);margin-right:6px;vertical-align:-1px}
+.moved{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.moved div{border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:13.5px;background:var(--panel);cursor:pointer}
+.moved div b{display:block;font-family:var(--display)}
+.tablewrap{overflow-x:auto}
+.ptable td.st{white-space:nowrap}
+.ptable tr{cursor:pointer}
+.ptable tr:hover td{background:color-mix(in srgb,var(--brand) 30%,transparent)}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <div class="eyebrow"><a class="series" href="../">The Quarry · Guernsey land use</a></div>
+    <h1>The housing pipeline</h1>
+    <p class="stand">Every site in the States of Guernsey's Housing Site Availability Framework, how far it had got by March 2026, and the planning applications behind it.</p>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="bench">
+      <div class="mapbox" id="mapbox">
+        <div id="map" role="region" aria-label="Map of Guernsey showing housing pipeline sites by stage"></div>
+        <div class="monthbig" id="monthbig"></div>
+      </div>
+
+      <div class="side">
+        <div class="panel controls"><a class="fullpage" href="./" target="_blank" rel="noopener">Open the full page with the charts and method</a>
+          <div class="seg" role="group" aria-label="Snapshot" id="snap">
+            <button type="button" data-i="0" aria-pressed="false">Q3 2025</button>
+            <button type="button" data-i="1" aria-pressed="false">Q4 2025</button>
+            <button type="button" data-i="2" aria-pressed="true">March 2026</button>
+          </div>
+          <div class="chips" id="chips" role="group" aria-label="Stage"></div>
+          <div class="seg" role="group" aria-label="Tenure" id="ten">
+            <button type="button" data-t="" aria-pressed="true">All tenures</button>
+            <button type="button" data-t="aff" aria-pressed="false">Affordable or mixed</button>
+            <button type="button" data-t="Private" aria-pressed="false">Private</button>
+          </div>
+          <p class="count" id="countline"></p>
+          <p class="count" style="margin:0">Circle size shows the number of homes. Sites without a figure are drawn small.</p>
+        </div>
+
+        <div class="panel card" id="card"><h3>Selected site</h3><p class="empty">Tap a site to see its stage, homes and planning history.</p></div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Where the homes stand</h2>
+      <p class="lead" id="stacklead"></p>
+      <div class="skey" id="skey"></div>
+      <div id="stacks"></div>
+    </section>
+
+    <section>
+      <h2>What moved between Q3 2025 and March 2026</h2>
+      <p class="lead" id="movedlead"></p>
+      <div class="moved" id="moved"></div>
+    </section>
+
+    <section>
+      <h2>Every site</h2>
+      <p class="lead">Sorted by the number of homes. Tap a row to find it on the map.</p>
+      <div class="tablewrap"><table class="ptable" id="sites"></table></div>
+    </section>
+
+    <section>
+      <h2>How this map was made</h2>
+      <div class="method">
+        <div>
+          <h3>The sites</h3>
+          <p>The States published its first Housing Site Availability Framework in March 2026. It lists 67 sites with their location area, landowner, tenure, number of homes, permission dates, and a stage for three dates: Q3 2025, Q4 2025 and the time of publication. The framework is meant to be updated twice a year; this map uses the first edition.</p>
+          <p>The stages are the framework's own: potential site, planning work ongoing, planning application ready, permission granted, post-planning and pre-construction, construction underway, and construction complete. A permission counts as valid for three years.</p>
+        </div>
+        <div>
+          <h3>Planning history</h3>
+          <p id="m-hist"></p>
+          <p>Matching is by location, so a list can include an application on a neighbouring part of the same site, and can miss one filed under a different property reference.</p>
+        </div>
+        <div>
+          <h3>What the framework doesn't show</h3>
+          <p>A stage is the States' own assessment at a point in time, not a site inspection. The Quarry found the former L'Eree Hotel cleared in April 2026 while the framework listed it as under construction, and a revised scheme for the site was submitted in October 2026. Homes are counted as the framework counts them; five sites, including both hospitals, have no figure yet.</p>
+        </div>
+        <div>
+          <h3>Locations and photos</h3>
+          <p>Each site is placed at a point set by The Quarry for its housing tracker. Photos are added as The Quarry visits each site.</p>
+        </div>
+        <div>
+          <h3>Sources</h3>
+          <ol class="sources">
+            <li><a href="data/housing-pipeline-2026-03.csv" download>Download the data (CSV)</a></li>
+            <li>States of Guernsey, Housing Site Availability Framework 2026 (March 2026)</li>
+            <li>States of Guernsey planning register, <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet" target="_blank" rel="noopener">Planning Applications Websearch</a></li>
+            <li>States of Guernsey Digimap: planning site boundaries and land parcels</li>
+            <li><a href="https://housingtracker.thequarry.media/" target="_blank" rel="noopener">The Quarry's housing tracker</a></li>
+            <li><a href="https://www.thequarry.media/tracking-guernsey-house-building-the-data-shows-there-are-no-quick-fixes-in-the-pipeline-2/" target="_blank" rel="noopener">Tracking Guernsey house building</a>, The Quarry, 7 Apr 2026</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer><div class="wrap">Framework data from the States of Guernsey, March 2026. Planning history collected from the register on 3 November 2026. Part of <a href="../">Guernsey land use</a> from The Quarry.</div></footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(async function(){
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let embedded = new URLSearchParams(location.search).has('embed');
+try { embedded = embedded || window.self !== window.top; } catch (e) { embedded = true; }
+document.body.classList.toggle('embed', embedded);
+const nf = n => n.toLocaleString('en-GB');
+const monthName = k => { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 15).toLocaleDateString('en-GB', {month:'short', year:'numeric'}); };
+const dateName = k => k ? new Date(k).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
+
+const D = await fetch('data/pipeline-data.json').then(r => r.json());
+const sites = D.items;
+// display order runs from earliest to latest stage
+const ORDER = [1, 2, 3, 5, 4, 6, 7];
+const RANK = Object.fromEntries(ORDER.map((s, i) => [s, i]));
+const NAME = {1:'Potential site', 2:'Planning work ongoing', 3:'Application ready', 5:'Permission granted', 4:'Pre-construction', 6:'Under construction', 7:'Complete'};
+const SNAP = ['Q3 2025', 'Q4 2025', 'March 2026'];
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const probe = document.createElement('span'); document.body.appendChild(probe);
+const COL = Object.fromEntries(ORDER.map(s => { probe.className = 'st' + s; return [s, getComputedStyle(probe).getPropertyValue('--c').trim()]; })); probe.remove();
+const pill = s => `<span class="pill st${s}"><i></i>${NAME[s]}</span>`;
+const units = s => s.units || 0;
+const aff = s => /afford|mixed|tbd/i.test(s.tenure) && !/^private$/i.test(s.tenure);
+
+// ---------- headline ----------
+const tot = sites.reduce((a, s) => a + units(s), 0);
+const uAt = (i, f) => sites.filter(s => f(s.st[i])).reduce((a, s) => a + units(s), 0);
+const building = uAt(2, s => s === 6);
+const noPerm = uAt(2, s => s <= 3);
+const affU = sites.filter(s => /afford/i.test(s.tenure) && !/mixed/i.test(s.tenure)).reduce((a, s) => a + units(s), 0);
+const movedF = sites.filter(s => RANK[s.st[2]] > RANK[s.st[0]]);
+$('stats').innerHTML = [
+  [nf(tot), `potential homes on ${sites.length} sites`],
+  [nf(building), 'under construction in March 2026'],
+  [nf(noPerm), 'on sites without planning permission'],
+  [movedF.length + ' of ' + sites.length, 'sites moved forward a stage in six months']
+].map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
+
+// ---------- map ----------
+const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' || document.documentElement.dataset.theme === 'dark';
+const map = L.map('map', {zoomControl: false, zoomSnap: 0.5, minZoom: 11, maxZoom: 19}).fitBounds([[49.42, -2.66], [49.495, -2.505]]);
+L.control.zoom({position: 'topright'}).addTo(map);
+L.tileLayer(`https://basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}.png?key=cb1_4rrh_1_787f5809ade6f105fa27d8a3`, {
+  maxZoom: 19, attribution: '&copy; OpenStreetMap contributors &copy; CARTO | Sites: States of Guernsey Housing Site Availability Framework'}).addTo(map);
+const z0 = map.getZoom();
+const zf = () => Math.pow(2, (map.getZoom() - z0) * 0.45);
+const baseR = s => s.units ? Math.max(4, Math.sqrt(s.units) * 1.7) : 3.5;
+const layer = L.layerGroup().addTo(map);
+for (const s of sites) {
+  s.node = L.circleMarker([s.lat, s.lng], {radius: baseR(s) * zf(), color: css('--bg'), weight: 1.2, fillOpacity: .85, bubblingMouseEvents: false})
+    .bindTooltip(esc(s.name) + (s.units ? ` · ${s.units} homes` : ''), {direction: 'top'}).on('click', () => select(s));
+}
+map.on('zoomend', () => { for (const s of sites) s.node.setRadius(baseR(s) * zf()); });
+
+// ---------- filters ----------
+let snap = 2, stage = 0, tenure = '', sel = null;
+function drawChips(){
+  $('chips').innerHTML = [[0, 'All stages', sites.length], ...ORDER.filter(st => sites.some(s => s.st[snap] === st)).map(st => [st, NAME[st], sites.filter(s => s.st[snap] === st).length])]
+    .map(([k, l, n]) => `<button type="button" class="chip" data-k="${k}" aria-pressed="${stage === k}">${k ? `<i class="st${k}" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:6px"></i>` : ''}${l}<span class="n">${n}</span></button>`).join('');
+}
+const visible = s => (!stage || s.st[snap] === stage) && (!tenure || (tenure === 'aff' ? aff(s) : /^private$/i.test(s.tenure)));
+function draw(){
+  let n = 0, u = 0;
+  for (const s of sites) {
+    const on = visible(s), has = layer.hasLayer(s.node);
+    if (on && !has) layer.addLayer(s.node); else if (!on && has) layer.removeLayer(s.node);
+    s.node.setStyle({fillColor: COL[s.st[snap]], color: s === sel ? css('--ink') : css('--bg'), weight: s === sel ? 3 : 1.2});
+    if (on) { n++; u += units(s); }
+  }
+  // draw big circles underneath small ones
+  sites.filter(s => layer.hasLayer(s.node)).sort((a, b) => units(b) - units(a)).forEach(s => s.node.bringToFront());
+  $('monthbig').innerHTML = `${SNAP[snap]}<small>stage shown for each site</small>`;
+  $('countline').innerHTML = `<b>${n}</b> sites with <b>${nf(u)}</b> potential homes`;
+}
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; stage = +b.dataset.k; drawChips(); draw(); });
+$('snap').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; snap = +b.dataset.i; [...$('snap').children].forEach(x => x.setAttribute('aria-pressed', x === b)); if (stage && !sites.some(s => s.st[snap] === stage)) stage = 0; drawChips(); draw(); if (sel) select(sel, true); });
+$('ten').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; tenure = b.dataset.t; [...$('ten').children].forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); });
+drawChips();
+
+// ---------- card ----------
+const OUT = {g:'Granted', r:'Refused', w:'Withdrawn', p:'Pending'};
+const mixText = m => Object.entries(m).map(([k, v]) => `${v} × ${k.replace('bed', '-bed').replace('_AH', ' affordable')}`).join(', ');
+function select(s, quiet){
+  sel = s; draw();
+  if (!quiet) map.setView([s.lat, s.lng], Math.max(map.getZoom(), 16));
+  const moved = RANK[s.st[2]] - RANK[s.st[0]];
+  $('card').innerHTML = `<h3>${esc(s.name)}</h3>
+    ${s.photo ? `<figure class="photo"><img src="${esc(s.photo.src)}" alt="${esc(s.photo.alt || s.name)}" loading="lazy"><figcaption>${esc(s.photo.caption || '')}</figcaption></figure>` : ''}
+    <div class="track">${s.st.map((st, i) => `<span title="${SNAP[i]}">${pill(st)}</span>`).join('<span aria-hidden="true">→</span>')}</div>
+    <p class="count" style="margin:4px 0 0">${SNAP.join(' → ')}${moved > 0 ? ' · moved forward' : moved < 0 ? ' · went back' : ' · no change'}</p>
+    <dl>
+      <dt>Homes</dt><dd>${s.units ? s.units + (Object.keys(s.mix).length ? ` (${mixText(s.mix)})` : '') : 'Not yet given'}</dd>
+      <dt>Tenure</dt><dd>${esc(s.tenure)}</dd>
+      <dt>Landowner</dt><dd>${esc(s.owner)}</dd>
+      <dt>Area</dt><dd>${esc(s.area)}</dd>
+      ${s.sub ? `<dt>Submitted</dt><dd>${dateName(s.sub)}</dd>` : ''}
+      ${s.granted ? `<dt>Granted</dt><dd>${dateName(s.granted)}</dd>` : ''}
+    </dl>
+    ${s.apps.length ? `<h3 style="font-size:14px">Planning history</h3><ul class="hist">${s.apps.slice().reverse().map(a => `<li class="${a.o}"><time>${monthName(a.m)}</time> · ${OUT[a.o]} · <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">${a.ref}</a><br>${esc(a.d.length > 220 ? a.d.slice(0, 217) + '…' : a.d)}</li>`).join('')}</ul>` : '<p class="count">No housing applications found on the register for this site since 2015.</p>'}`;
+  if (!quiet && matchMedia('(max-width:860px)').matches) $('card').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+// ---------- stacked bars ----------
+$('skey').innerHTML = ORDER.filter(st => sites.some(s => s.st.includes(st))).map(st => `<span class="st${st}"><i></i>${NAME[st]}</span>`).join('');
+$('stacks').innerHTML = SNAP.map((lab, i) => {
+  const parts = ORDER.map(st => [st, uAt(i, x => x === st)]).filter(p => p[1]);
+  return `<div class="stackrow"><span>${lab}</span><div class="stack" role="img" aria-label="${lab}: ${parts.map(([st, v]) => `${v} homes ${NAME[st].toLowerCase()}`).join(', ')}">${parts.map(([st, v]) => `<span class="st${st}" style="width:${(100 * v / tot).toFixed(2)}%" title="${NAME[st]}: ${nf(v)} homes"></span>`).join('')}</div><span style="font-variant-numeric:tabular-nums">${nf(tot)}</span></div>`;
+}).join('');
+const b0 = uAt(0, s => s === 6), perm0 = uAt(0, s => s >= 4 && s !== 7), perm2 = uAt(2, s => s >= 4 && s !== 7);
+$('stacklead').textContent = `Homes on framework sites by stage at each of the framework's three dates. Under construction went from ${nf(b0)} to ${nf(building)} homes; homes with permission or further along went from ${nf(perm0)} to ${nf(perm2)}. ${nf(noPerm)} of the ${nf(tot)} homes are on sites that had no planning permission in March 2026, ${nf(uAt(2, s => s === 1))} of them on sites listed only as potential.`;
+
+// ---------- moved ----------
+const back = sites.filter(s => RANK[s.st[2]] < RANK[s.st[0]]);
+$('movedlead').textContent = `${movedF.length} sites moved forward at least one stage, carrying ${nf(movedF.reduce((a, s) => a + units(s), 0))} homes. ${back.length === 1 ? 'One went back' : back.length + ' went back'}: ${back.map(s => s.name).join(', ')}, where the permission lapsed.`;
+$('moved').innerHTML = [...movedF, ...back].sort((a, b) => units(b) - units(a)).map(s => `<div data-id="${s.id}"><b>${esc(s.name)}</b>${s.units ? s.units + ' homes · ' : ''}${NAME[s.st[0]]} → ${NAME[s.st[2]]}</div>`).join('');
+$('moved').addEventListener('click', e => { const d = e.target.closest('[data-id]'); if (!d) return; const s = sites.find(x => x.id === d.dataset.id); select(s); $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'}); });
+
+// ---------- table ----------
+const sorted = sites.slice().sort((a, b) => units(b) - units(a) || a.name.localeCompare(b.name));
+$('sites').innerHTML = '<tr><th>Site</th><th style="text-align:right">Homes</th><th>Tenure</th><th>March 2026</th><th>Latest application</th></tr>' +
+  sorted.map(s => { const a = s.apps[s.apps.length - 1]; return `<tr data-id="${s.id}"><td>${esc(s.name)}</td><td class="n">${s.units || '–'}</td><td>${esc(s.tenure)}</td><td class="st">${pill(s.st[2])}</td><td>${a ? `${monthName(a.m)}, ${OUT[a.o].toLowerCase()}` : '–'}</td></tr>`; }).join('');
+$('sites').addEventListener('click', e => { const r = e.target.closest('tr[data-id]'); if (!r) return; select(sites.find(x => x.id === r.dataset.id)); $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'}); });
+
+const nApps = sites.reduce((a, s) => a + s.apps.length, 0), withApps = sites.filter(s => s.apps.length).length;
+$('m-hist').textContent = `Each site was matched to the States planning register through the site boundaries drawn under its location (from 2020) and the land parcel it sits on. Only applications that create, convert or redevelop homes, or demolish buildings to do so, are listed: ${nApps} applications across ${withApps} of the ${sites.length} sites.`;
+
+draw();
+})();
+</script>
+</body>
+</html>
