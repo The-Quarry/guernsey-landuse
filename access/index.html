@@ -130,6 +130,9 @@ body.embed .fullpage{display:inline}
 .signup a.cta{display:inline-block;font:600 15px var(--body);background:#141412;color:#f8fd98;text-decoration:none;border-radius:6px;padding:11px 18px}
 .signup a.cta:hover{background:#2f6b4c}
 body.embed .signup{display:none}
+.backbtn{position:absolute;left:12px;top:62px;z-index:600;font:600 13.5px var(--body);background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:9px 13px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.backbtn:hover{background:var(--green-ink)}
+.cardback{font:600 13px var(--body);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;margin-top:10px}
 </style>
 </head>
 <body>
@@ -149,6 +152,7 @@ body.embed .signup{display:none}
       <div class="mapbox" id="mapbox">
         <div id="map" role="region" aria-label="Map of Guernsey showing vehicle access, hedge and earth bank planning applications"></div>
         <div class="monthbig" id="monthbig"></div>
+        <button type="button" class="backbtn" id="back" hidden>← Back to full map</button>
       </div>
 
       <div class="side">
@@ -344,7 +348,20 @@ $('modeCum').onclick = () => setMode('cum'); $('modeYear').onclick = () => setMo
 
 // ---------- card ----------
 const TAGTEXT = {new: 'New vehicle access', altered: 'Widened or altered access', hedge: 'Hedge removed', bank: 'Earth bank removed', wall: 'Wall taken down or lowered', parking: 'Parking or hardstanding', closed: 'Existing access closed'};
+// ---------- back to full map ----------
+const HOME = [[49.405, -2.675], [49.512, -2.505]], EMPTY_CARD = '<h3>Selected application</h3><p class="empty">Tap a dot to see the application.</p>';
+function resetView(){
+  if (outline) { map.removeLayer(outline); outline = null; }
+  $('card').innerHTML = EMPTY_CARD;
+  map.fitBounds(HOME);
+  $('back').hidden = true;
+  if (matchMedia('(max-width:860px)').matches) $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+$('back').addEventListener('click', resetView);
+$('card').addEventListener('click', e => { if (e.target.closest('.cardback')) resetView(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('back').hidden) resetView(); });
 function select(a){
+  $('back').hidden = false;
   if (outline) { map.removeLayer(outline); outline = null; }
   if (a.ol) outline = L.polygon(a.ol, {color: css('--ink'), weight: 2, fill: false, dashArray: '4 3'}).addTo(map);
   if (outline) map.fitBounds(outline.getBounds(), {maxZoom: 19, padding: [60, 60]}); else if (a.lat) map.setView([a.lat, a.lng], Math.max(map.getZoom(), 17));
@@ -360,7 +377,8 @@ function select(a){
       ${a.garden ? '<dt>Also</dt><dd>Turns farmland into garden (on the <a href="../fields/">fields map</a>)</dd>' : ''}
       <dt>Placed by</dt><dd>${a.src === 'b' ? 'States site boundary, outlined on the map' : 'Land parcel for the property'}</dd>
     </dl>
-    <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">Full application on the States planning register</a>`;
+    <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">Full application on the States planning register</a>
+    <button type="button" class="cardback">← Back to full map</button>`;
   if (matchMedia('(max-width:860px)').matches) $('card').scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 

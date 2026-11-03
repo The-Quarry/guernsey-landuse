@@ -153,6 +153,9 @@ body.embed .fullpage{display:inline}
 .signup a.cta{display:inline-block;font:600 15px var(--body);background:#141412;color:#f8fd98;text-decoration:none;border-radius:6px;padding:11px 18px}
 .signup a.cta:hover{background:#2f6b4c}
 body.embed .signup{display:none}
+.backbtn{position:absolute;left:12px;top:62px;z-index:600;font:600 13.5px var(--body);background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:9px 13px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.backbtn:hover{background:var(--green-ink)}
+.cardback{font:600 13px var(--body);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;margin-top:10px}
 </style>
 </head>
 <body>
@@ -172,6 +175,7 @@ body.embed .signup{display:none}
       <div class="mapbox" id="mapbox">
         <div id="map" role="region" aria-label="Map of Guernsey showing housing pipeline sites by stage"></div>
         <div class="monthbig" id="monthbig"></div>
+        <button type="button" class="backbtn" id="back" hidden>← Back to full map</button>
       </div>
 
       <div class="side">
@@ -340,7 +344,20 @@ drawChips();
 // ---------- card ----------
 const OUT = {g:'Granted', r:'Refused', w:'Withdrawn', p:'Pending'};
 const mixText = m => Object.entries(m).map(([k, v]) => `${v} × ${k.replace('bed', '-bed').replace('_AH', ' affordable')}`).join(', ');
+// ---------- back to full map ----------
+const HOME = [[49.42, -2.66], [49.495, -2.505]], EMPTY_CARD = '<h3>Selected site</h3><p class="empty">Tap a site to see its stage, homes and planning history.</p>';
+function resetView(){
+  sel = null; draw();
+  $('card').innerHTML = EMPTY_CARD;
+  map.fitBounds(HOME);
+  $('back').hidden = true;
+  if (matchMedia('(max-width:860px)').matches) $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+$('back').addEventListener('click', resetView);
+$('card').addEventListener('click', e => { if (e.target.closest('.cardback')) resetView(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('back').hidden) resetView(); });
 function select(s, quiet){
+  $('back').hidden = false;
   sel = s; draw();
   if (!quiet) map.setView([s.lat, s.lng], Math.max(map.getZoom(), 16));
   const moved = RANK[s.st[2]] - RANK[s.st[0]];
@@ -356,7 +373,8 @@ function select(s, quiet){
       ${s.sub ? `<dt>Submitted</dt><dd>${dateName(s.sub)}</dd>` : ''}
       ${s.granted ? `<dt>Granted</dt><dd>${dateName(s.granted)}</dd>` : ''}
     </dl>
-    ${s.apps.length ? `<h3 style="font-size:14px">Planning history</h3><ul class="hist">${s.apps.slice().reverse().map(a => `<li class="${a.o}"><time>${monthName(a.m)}</time> · ${OUT[a.o]} · <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">${a.ref}</a><br>${esc(a.d.length > 220 ? a.d.slice(0, 217) + '…' : a.d)}</li>`).join('')}</ul>` : '<p class="count">No housing applications found on the register for this site since 2015.</p>'}`;
+    ${s.apps.length ? `<h3 style="font-size:14px">Planning history</h3><ul class="hist">${s.apps.slice().reverse().map(a => `<li class="${a.o}"><time>${monthName(a.m)}</time> · ${OUT[a.o]} · <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">${a.ref}</a><br>${esc(a.d.length > 220 ? a.d.slice(0, 217) + '…' : a.d)}</li>`).join('')}</ul>` : '<p class="count">No housing applications found on the register for this site since 2015.</p>'}
+    <button type="button" class="cardback">← Back to full map</button>`;
   if (!quiet && matchMedia('(max-width:860px)').matches) $('card').scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
 
