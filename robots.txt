@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://landuse.thequarry.media/sitemap.xml

@@ -7,6 +7,14 @@
 <meta name="description" content="The 67 sites in the States of Guernsey Housing Site Availability Framework, their 1,741 potential homes, how far each has got and its planning history.">
 <meta property="og:title" content="Guernsey housing pipeline">
 <meta property="og:description" content="Where the 1,741 homes in the States housing pipeline stand, site by site.">
+<link rel="canonical" href="https://landuse.thequarry.media/pipeline/">
+<meta property="og:url" content="https://landuse.thequarry.media/pipeline/">
+<meta property="og:site_name" content="The Quarry">
+<meta property="og:image" content="https://landuse.thequarry.media/og/pipeline.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://landuse.thequarry.media/og/pipeline.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Guernsey housing pipeline", "description": "The 67 sites and 1,741 potential homes in the States of Guernsey Housing Site Availability Framework, how far each has got and the planning applications behind it.", "url": "https://landuse.thequarry.media/pipeline/", "creator": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "isPartOf": {"@type": "CollectionPage", "name": "Guernsey land use maps", "url": "https://landuse.thequarry.media/"}, "spatialCoverage": {"@type": "Place", "name": "Guernsey"}, "temporalCoverage": "2025-07/2026-03", "isBasedOn": ["States of Guernsey Housing Site Availability Framework 2026", "States of Guernsey planning register", "States of Guernsey Digimap"], "inLanguage": "en-GB", "dateModified": "2026-11-03", "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://landuse.thequarry.media/pipeline/data/housing-pipeline-2026-03.csv"}]}</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
@@ -138,6 +146,13 @@ body.embed .fullpage{display:inline}
 .ptable td.st{white-space:nowrap}
 .ptable tr{cursor:pointer}
 .ptable tr:hover td{background:color-mix(in srgb,var(--brand) 30%,transparent)}
+.signup{background:var(--brand);color:#141412;border-top:1px solid #141412}
+.signup .wrap{padding-block:26px;display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+.signup h2{font:700 22px/1.2 var(--display);margin:0 0 4px}
+.signup p{margin:0;max-width:60ch;font-size:15px}
+.signup a.cta{display:inline-block;font:600 15px var(--body);background:#141412;color:#f8fd98;text-decoration:none;border-radius:6px;padding:11px 18px}
+.signup a.cta:hover{background:#2f6b4c}
+body.embed .signup{display:none}
 </style>
 </head>
 <body>
@@ -235,7 +250,11 @@ body.embed .fullpage{display:inline}
     </section>
   </div>
 </main>
-<footer><div class="wrap">Framework data from the States of Guernsey, March 2026. Planning history collected from the register on 3 November 2026. Part of <a href="../">Guernsey land use</a> from The Quarry.</div></footer>
+<aside class="signup" aria-label="Subscribe to The Quarry"><div class="wrap">
+  <div><h2>More from The Quarry</h2><p>These maps are made by <a href="https://www.thequarry.media/" style="color:inherit">The Quarry</a>, Guernsey's fearless, independent newsroom. We're reader-funded with no advertising. Subscribe to get each new map and our reporting in your inbox.</p></div>
+  <a class="cta" href="https://www.thequarry.media/#/portal/signup" target="_blank" rel="noopener">Subscribe to The Quarry</a>
+</div></aside>
+<footer><div class="wrap">Framework data from the States of Guernsey, March 2026. Planning history collected from the register on 3 November 2026. Part of the <a href="../">Guernsey land use maps</a> from <a href="https://www.thequarry.media/">The Quarry</a>.</div></footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>

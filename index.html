@@ -2,49 +2,93 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Guernsey land use maps | The Quarry</title>
-<meta name="description" content="A weekly series of maps from The Quarry tracing how Guernsey's land has changed since 2015, built from every application on the States planning register.">
+<meta name="description" content="Five maps from The Quarry tracing what has happened to Guernsey's fields, hedges, old buildings, hotels and housing sites since 2015, from the States planning register and housing pipeline data.">
 <meta property="og:title" content="Guernsey land use maps">
-<meta property="og:description" content="How Guernsey's fields, hedges and banks have changed since 2015, mapped from the States planning register.">
+<meta property="og:description" content="Five maps from The Quarry tracing what has happened to Guernsey's fields, hedges, old buildings, hotels and housing sites since 2015, from the States planning register and housing pipeline data.">
 <meta property="og:type" content="website">
+<link rel="canonical" href="https://landuse.thequarry.media/">
+<meta property="og:url" content="https://landuse.thequarry.media/">
+<meta property="og:site_name" content="The Quarry">
+<meta property="og:image" content="https://landuse.thequarry.media/og/landuse.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://landuse.thequarry.media/og/landuse.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Guernsey land use maps", "description": "Five maps from The Quarry tracing what has happened to Guernsey's fields, hedges, old buildings, hotels and housing sites since 2015, from the States planning register and housing pipeline data.", "url": "https://landuse.thequarry.media/", "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "inLanguage": "en-GB", "hasPart": [{"@type": "Dataset", "name": "Guernsey fields into gardens", "url": "https://landuse.thequarry.media/fields/"}, {"@type": "Dataset", "name": "Guernsey hedges, banks and driveways", "url": "https://landuse.thequarry.media/access/"}, {"@type": "Dataset", "name": "Guernsey new homes from old buildings", "url": "https://landuse.thequarry.media/oldbuildings/"}, {"@type": "Dataset", "name": "Guernsey housing pipeline", "url": "https://landuse.thequarry.media/pipeline/"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--brand:#f8fd98;--green:#60A07D;--ink:#141412;--muted:#5d5d55;--bg:#fbfbf7;--panel:#fff;--line:#e3e3da;--display:'Space Grotesk',system-ui,sans-serif;--body:'Poppins',system-ui,sans-serif;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#ededE6;--muted:#a8a89e;--bg:#141412;--panel:#1d1d1a;--line:#33332e;color-scheme:dark}}
-:root[data-theme="dark"]{--ink:#ededE6;--muted:#a8a89e;--bg:#141412;--panel:#1d1d1a;--line:#33332e;color-scheme:dark}
+:root{--brand:#f8fd98;--green:#60A07D;--green-ink:#2f6b4c;--ink:#141412;--muted:#5d5d55;--bg:#fbfbf7;--panel:#fff;--line:#e3e3da;--display:'Space Grotesk',system-ui,sans-serif;--body:'Poppins',system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#ededE6;--muted:#a8a89e;--bg:#141412;--panel:#1d1d1a;--line:#33332e;--green-ink:#8fc7a6;color-scheme:dark}}
+:root[data-theme="dark"]{--ink:#ededE6;--muted:#a8a89e;--bg:#141412;--panel:#1d1d1a;--line:#33332e;--green-ink:#8fc7a6;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body)}
-.wrap{max-width:960px;margin:0 auto;padding:0 16px}
-.mast{background:var(--brand);color:#141412;padding:40px 0 32px}
-.eyebrow{font-size:13px;font-weight:600;letter-spacing:.04em}
-h1{font:700 clamp(32px,6vw,52px)/1.05 var(--display);margin:8px 0 12px}
-.mast p{max-width:640px;margin:0;font-size:17px}
-main{padding:32px 0 48px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px}
-.item{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;color:inherit;text-decoration:none}
-a.item:hover{border-color:var(--green)}
-.item .n{font:600 12px var(--body);color:var(--green);letter-spacing:.06em;text-transform:uppercase}
-.item h2{font:700 22px/1.15 var(--display);margin:6px 0 8px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--green-ink)}
+.mast{background:var(--brand);color:#141412}
+.mast .wrap{padding-block:36px 30px}
+.eyebrow{font:600 13px var(--body);letter-spacing:.08em;text-transform:uppercase}
+.eyebrow a{color:inherit;text-decoration:none}
+h1{font:700 clamp(34px,6vw,58px)/1.02 var(--display);margin:10px 0 14px;text-wrap:balance;letter-spacing:-.01em}
+.mast p{max-width:64ch;margin:0;font-size:17px}
+.hero{margin:0;background:#141412}
+.hero img{display:block;width:100%;max-height:62vh;object-fit:cover}
+.hero figcaption{font-size:12.5px;color:#cfd0c6;padding:6px max(16px,env(safe-area-inset-left,0px))}
+main .wrap{padding-block:32px 44px;display:grid;gap:36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:16px}
+.item{display:grid;gap:6px;align-content:start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;color:inherit;text-decoration:none}
+a.item:hover,a.item:focus-visible{border-color:var(--green);outline:none}
+.item .n{font:600 12px var(--body);color:var(--green-ink);letter-spacing:.06em;text-transform:uppercase}
+.item h2{font:700 22px/1.15 var(--display);margin:0}
 .item p{margin:0;font-size:14.5px;color:var(--muted)}
-.item.soon{opacity:.6}
-footer{border-top:1px solid var(--line);padding:20px 0;font-size:13px;color:var(--muted)}
+.item .go{font-weight:600;font-size:14px;color:var(--green-ink);margin-top:4px}
+.item.soon{border-style:dashed}
+.about h2{font:700 22px/1.2 var(--display);margin:0 0 8px}
+.about p{margin:0 0 10px;max-width:70ch;color:var(--muted)}
+.about ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px}
+.signup{background:var(--brand);color:#141412;border-top:1px solid #141412}
+.signup .wrap{padding-block:26px;display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+.signup h2{font:700 22px/1.2 var(--display);margin:0 0 4px}
+.signup p{margin:0;max-width:60ch;font-size:15px}
+.signup a.cta{display:inline-block;font:600 15px var(--body);background:#141412;color:#f8fd98;text-decoration:none;border-radius:6px;padding:11px 18px}
+.signup a.cta:hover{background:#2f6b4c}
+body.embed .signup{display:none}
+
+footer .wrap{padding-block:18px 30px;font-size:13px;color:var(--muted)}
 footer a{color:inherit}
 </style>
 </head>
 <body>
 <header class="mast"><div class="wrap">
-  <div class="eyebrow">The Quarry · Guernsey land use</div>
+  <div class="eyebrow"><a href="https://www.thequarry.media/">The Quarry</a></div>
   <h1>How Guernsey's land is changing</h1>
-  <p>A weekly series of maps built from every application on the States planning register since 2015, tracing what happens to the island's fields, hedges and banks.</p>
+  <p>Five maps tracing what has happened to the island's fields, hedges, old buildings, hotels and housing sites since 2015, built from every application on the States planning register and the States' own housing pipeline.</p>
 </div></header>
-<main><div class="wrap"><div class="grid">
-  <a class="item" href="fields/"><div class="n">Map 1</div><h2>Fields into gardens</h2><p>830 applications to turn fields and farmland into domestic garden, before and after the 2016 Island Development Plan.</p></a>
-  <a class="item" href="access/"><div class="n">Map 2</div><h2>Hedges, banks and driveways</h2><p>2,132 applications to create or widen a vehicle access, or take out a hedge or earth bank.</p></a>
-  <a class="item" href="oldbuildings/"><div class="n">Map 3</div><h2>New homes from old buildings</h2><p>223 applications to turn packing sheds, barns and outbuildings into homes, or to replace them with houses.</p></a>
-  <a class="item" href="pipeline/"><div class="n">Map 5</div><h2>The housing pipeline</h2><p>The 67 sites and 1,741 potential homes in the States housing framework, how far each has got, and the applications behind it.</p></a>
-</div></div></main>
-<footer><div class="wrap">Data from the States of Guernsey planning register and Digimap. <a href="https://thequarry.media">The Quarry</a>.</div></footer>
+<figure class="hero" id="hero" hidden><img src="hero.jpg" alt="" onload="this.parentNode.hidden=false" onerror="this.parentNode.remove()"><figcaption id="herocap"></figcaption></figure>
+<main><div class="wrap">
+  <div class="grid">
+    <a class="item" href="fields/"><div class="n">Map 1</div><h2>Fields into gardens</h2><p>830 applications to turn fields and farmland into domestic garden, before and after the 2016 Island Development Plan.</p><span class="go">Open the map</span></a>
+    <a class="item" href="access/"><div class="n">Map 2</div><h2>Hedges, banks and driveways</h2><p>2,132 applications to create or widen a vehicle access, or take out a hedge or earth bank.</p><span class="go">Open the map</span></a>
+    <a class="item" href="oldbuildings/"><div class="n">Map 3</div><h2>New homes from old buildings</h2><p>223 applications to turn packing sheds, barns and outbuildings into homes, or to replace them with houses.</p><span class="go">Open the map</span></a>
+    <div class="item soon"><div class="n">Map 4 · Coming soon</div><h2>Hotels into homes</h2><p>The hotels, guesthouses and holiday lets that have become homes, staff housing or offices, checked on the ground.</p></div>
+    <a class="item" href="pipeline/"><div class="n">Map 5</div><h2>The housing pipeline</h2><p>The 67 sites and 1,741 potential homes in the States housing framework, how far each has got, and the applications behind it.</p><span class="go">Open the map</span></a>
+  </div>
+  <section class="about">
+    <h2>Where the data comes from</h2>
+    <p>The Quarry searched the States of Guernsey planning register month by month for every application validated from January 2015 to October 2026, 17,913 in all, and sorted them by what each one proposes. Each map explains exactly how its applications were chosen and placed.</p>
+    <ul>
+      <li>States of Guernsey planning register (Planning Applications Websearch)</li>
+      <li>States of Guernsey Digimap: planning site boundaries and land parcels</li>
+      <li>States of Guernsey Housing Site Availability Framework 2026</li>
+      <li>Guernsey Press and other published reporting, cited on each map</li>
+    </ul>
+  </section>
+</div></main>
+<aside class="signup" aria-label="Subscribe to The Quarry"><div class="wrap">
+  <div><h2>More from The Quarry</h2><p>These maps are made by <a href="https://www.thequarry.media/" style="color:inherit">The Quarry</a>, Guernsey's fearless, independent newsroom. We're reader-funded with no advertising. Subscribe to get each new map and our reporting in your inbox.</p></div>
+  <a class="cta" href="https://www.thequarry.media/#/portal/signup" target="_blank" rel="noopener">Subscribe to The Quarry</a>
+</div></aside>
+<footer><div class="wrap">Data collected on 3 November 2026. <a href="https://www.thequarry.media/">The Quarry</a>: fearless, independent news from Guernsey.</div></footer>
 </body>
 </html>
