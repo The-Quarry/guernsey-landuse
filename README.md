@@ -1,11 +1,15 @@
-# Fields into gardens
+# Guernsey land use
 
-Every Guernsey planning application from January 2015 to October 2026 to turn a field or farmland into domestic garden, mapped month by month around the 2016 Island Development Plan.
+A weekly series of maps from The Quarry tracing how Guernsey's land has changed since 2015, built from the States of Guernsey planning register and Digimap.
 
-Live at https://fields.thequarry.media
+Live at https://landuse.thequarry.media
 
-- `index.html` is the whole page (Leaflet, CARTO tiles). Add `?embed=1` for a map-only version to iframe in Ghost.
-- `data/fields-data.json` is the data the page reads: 830 applications with descriptions, outcomes, locations and, from 2020, the States site boundary.
-- `data/fields-into-gardens-2015-2026.csv` is the same data as a spreadsheet.
+| Path | Map |
+|---|---|
+| `/` | Series index |
+| `/fields/` | Fields into gardens: 830 applications to turn fields or farmland into garden |
+| `/access/` | Hedges, banks and driveways: 2,132 applications for vehicle accesses and hedge or earth bank removal |
 
-Data collected from the States of Guernsey planning register and Digimap on 3 November 2026. The page explains how applications were selected and located.
+Each map is one `index.html` (Leaflet, CARTO tiles) reading `data/*.json` beside it, with a CSV of the same data for download. Add `?embed=1` for a map-only version to iframe in Ghost; inside an iframe that happens automatically.
+
+Data collected from the planning register on 3 November 2026. Each page explains how applications were selected and located.
