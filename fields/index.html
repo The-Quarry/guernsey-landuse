@@ -196,18 +196,19 @@ body.embed .signup{display:none}
           <h3>The applications</h3>
           <p id="m-source"></p>
           <p>An application is included if its description changes agricultural land, a field, paddock or vinery to garden or domestic curtilage, or extends a domestic curtilage or garden. Amendments to earlier approvals are left out so the same land isn't counted twice, as are extensions to the grounds of hotels, schools and businesses.</p>
+          <p>The register only holds planning applications. Since 2019 the States have also issued certificates of lawful use, which confirm that land already used as garden for long enough can stay that way without permission. At least 16 such certificates for domestic garden were granted from 2020 to 2026. They are listed separately on gov.gg and are not on this map.</p>
         </div>
         <div>
           <h3>Two kinds of wording</h3>
-          <p>Until about 2018 most of these applications were described simply as "Extend domestic curtilage", without saying what the land was. From 2018 they almost always say "change of use of agricultural land". The map shows the older wording as hollow rings. Not all of them were fields: a States spokesman put 2017's field-to-garden approvals at 17, while 21 of that year's approvals here name agricultural land and the rest use the older wording.</p>
+          <p>Until about 2018 most of these applications were described simply as "Extend domestic curtilage", without saying what the land was. From 2019 they almost always say "change of use of agricultural land". The map shows the older wording as hollow rings. Not all of them were fields: a States spokesman put 2017's field-to-garden approvals at 17, while 21 of that year's approvals here name agricultural land and the rest use the older wording.</p>
         </div>
         <div>
           <h3>Dates and outcomes</h3>
-          <p>Each application appears in the month it was validated, not the month it was decided. The outcome is its status on the register now, so recent months include applications still pending.</p>
+          <p>Each application appears in the month it was validated, not the month it was decided. The outcome is its status on the register, checked again on 23 November 2026, so recent months include applications still pending.</p>
         </div>
         <div>
           <h3>Areas</h3>
-          <p>From 2020 most descriptions state the area involved. That is the area applied for: planners sometimes approve less, and the figures include land outside Agriculture Priority Areas. They are not comparable with the States' own monitoring figures, which count only Agriculture Priority Area land actually approved.</p>
+          <p>From 2021 almost every description states the area involved. That is the area applied for: planners sometimes approve less, and the figures include land outside Agriculture Priority Areas. They are not comparable with the States' own monitoring figures, which count only Agriculture Priority Area land actually approved.</p>
         </div>
         <div>
           <h3>Locations</h3>
@@ -216,7 +217,7 @@ body.embed .signup{display:none}
         <div>
           <h3>Sources</h3>
           <ol class="sources">
-            <li><a href="data/fields-into-gardens-2015-2026.csv" download>Download the data (CSV, 830 applications)</a></li>
+            <li><a href="data/fields-into-gardens-2015-2026.csv" download>Download the data (CSV, 828 applications)</a></li>
             <li>States of Guernsey planning register, <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet" target="_blank" rel="noopener">Planning Applications Websearch</a></li>
             <li>States of Guernsey Digimap: planning site boundaries, land parcels and parish boundaries</li>
             <li><a href="https://guernseypress.com/news/2018/08/20/idp-has-allowed-more-farm-land-to-become-garden" target="_blank" rel="noopener">IDP has allowed more farm land to become garden</a>, Guernsey Press, 20 Aug 2018</li>
@@ -236,7 +237,7 @@ body.embed .signup{display:none}
   <div><h2>More from The Quarry</h2><p>These maps are made by <a href="https://www.thequarry.media/" style="color:inherit">The Quarry</a>, Guernsey's fearless, independent newsroom. We're reader-funded with no advertising. Subscribe to get each new map and our reporting in your inbox.</p></div>
   <a class="cta" href="https://www.thequarry.media/#/portal/signup" target="_blank" rel="noopener">Subscribe to The Quarry</a>
 </div></aside>
-<footer><div class="wrap">Data collected from the States of Guernsey planning register on 3 November 2026. Part of the <a href="../">Guernsey land use maps</a> from <a href="https://www.thequarry.media/">The Quarry</a>.</div></footer>
+<footer><div class="wrap">Data collected from the States of Guernsey planning register on 3 November 2026; outcomes checked on 23 November 2026. Part of the <a href="../">Guernsey land use maps</a> from <a href="https://www.thequarry.media/">The Quarry</a>.</div></footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -279,7 +280,7 @@ $('stats').innerHTML = [
 const totalApps = Object.values(monthTotals).reduce((s, v) => s + v, 0);
 $('m-source').textContent = `The States planning register was searched month by month for every application validated from January 2015 to October 2026: ${nf(totalApps)} applications in all. ${nf(apps.length)} of them match.`;
 const nb = apps.filter(a => a.src === 'b').length, np = apps.filter(a => a.src === 'p').length, nn = apps.filter(a => !a.lat).length;
-$('m-loc').textContent = `From 2020 the States draw a site boundary for each application, and ${nf(nb)} dots sit at the centre of that boundary, which is drawn when you select one. Before 2020 there are no boundaries, so ${nf(np)} dots sit at the centre of the land parcel or parcels listed against the property: that is the property, which may not be exactly where the field is. ${nn} older applications reference parcels that no longer exist and are not on the map.`;
+$('m-loc').textContent = `From 2020 the States draw a site boundary for each application, and ${nf(nb)} dots sit at the centre of that boundary, which is drawn when you select one. Before 2020 there are no boundaries, so ${nf(np)} dots sit at the centre of the land parcel or parcels listed against the property: that is the property, which may not be exactly where the field is. ${nn} applications could not be placed, mostly older ones that reference parcels which no longer exist, and are not on the map.`;
 
 // ---------- map ----------
 const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' || document.documentElement.dataset.theme === 'dark';

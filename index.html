@@ -44,6 +44,8 @@ a.item:hover,a.item:focus-visible{border-color:var(--green);outline:none}
 .item p{margin:0;font-size:14.5px;color:var(--muted)}
 .item .go{font-weight:600;font-size:14px;color:var(--green-ink);margin-top:4px}
 .item.soon{border-style:dashed}
+.item.locked{border-style:dashed;cursor:default}
+.item.locked h2,.item.locked p,.item.soon h2,.item.soon p{opacity:.55}
 .about h2{font:700 22px/1.2 var(--display);margin:0 0 8px}
 .about p{margin:0 0 10px;max-width:70ch;color:var(--muted)}
 .about ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px}
@@ -68,11 +70,11 @@ footer a{color:inherit}
 <figure class="hero" id="hero" hidden><img src="hero.jpg" alt="" onload="this.parentNode.hidden=false" onerror="this.parentNode.remove()"><figcaption id="herocap"></figcaption></figure>
 <main><div class="wrap">
   <div class="grid">
-    <a class="item" href="fields/"><div class="n">Map 1</div><h2>Fields into gardens</h2><p>830 applications to turn fields and farmland into domestic garden, before and after the 2016 Island Development Plan.</p><span class="go">Open the map</span></a>
-    <a class="item" href="access/"><div class="n">Map 2</div><h2>Hedges, banks and driveways</h2><p>2,132 applications to create or widen a vehicle access, or take out a hedge or earth bank.</p><span class="go">Open the map</span></a>
-    <a class="item" href="oldbuildings/"><div class="n">Map 3</div><h2>New homes from old buildings</h2><p>223 applications to turn packing sheds, barns and outbuildings into homes, or to replace them with houses.</p><span class="go">Open the map</span></a>
+    <a class="item" href="fields/" data-opens="2026-11-24T06:00:00Z"><div class="n">Map 1</div><h2>Fields into gardens</h2><p>828 applications to turn fields and farmland into domestic garden, before and after the 2016 Island Development Plan.</p><span class="go">Open the map</span></a>
+    <a class="item" href="access/" data-opens="2026-11-25T06:00:00Z"><div class="n">Map 2</div><h2>Hedges, banks and driveways</h2><p>2,132 applications to create or widen a vehicle access, or take out a hedge or earth bank.</p><span class="go">Open the map</span></a>
+    <a class="item" href="oldbuildings/" data-opens="2026-11-26T06:00:00Z"><div class="n">Map 3</div><h2>New homes from old buildings</h2><p>223 applications to turn packing sheds, barns and outbuildings into homes, or to replace them with houses.</p><span class="go">Open the map</span></a>
     <div class="item soon"><div class="n">Map 4 · Coming soon</div><h2>Hotels into homes</h2><p>The hotels, guesthouses and holiday lets that have become homes, staff housing or offices, checked on the ground.</p></div>
-    <a class="item" href="pipeline/"><div class="n">Map 5</div><h2>The housing pipeline</h2><p>The 67 sites and 1,741 potential homes in the States housing framework, how far each has got, and the applications behind it.</p><span class="go">Open the map</span></a>
+    <a class="item" href="pipeline/" data-opens="2026-11-27T06:00:00Z"><div class="n">Map 5</div><h2>The housing pipeline</h2><p>The 67 sites and 1,741 potential homes in the States housing framework, how far each has got, and the applications behind it.</p><span class="go">Open the map</span></a>
   </div>
   <section class="about">
     <h2>Where the data comes from</h2>
@@ -90,5 +92,13 @@ footer a{color:inherit}
   <a class="cta" href="https://www.thequarry.media/#/portal/signup" target="_blank" rel="noopener">Subscribe to The Quarry</a>
 </div></aside>
 <footer><div class="wrap">Data collected on 3 November 2026. <a href="https://www.thequarry.media/">The Quarry</a>: fearless, independent news from Guernsey.</div></footer>
+<script>
+(function(){var now=Date.now(),days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],mon=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var q=new URLSearchParams(location.search);if(q.has('preview'))return;
+document.querySelectorAll('a.item[data-opens]').forEach(function(a){var t=new Date(a.getAttribute('data-opens'));if(now>=t.getTime())return;
+var d=document.createElement('div');d.className='item locked';d.setAttribute('aria-disabled','true');d.innerHTML=a.innerHTML;
+var n=d.querySelector('.n');if(n)n.textContent+=' \u00b7 Opens '+days[t.getUTCDay()]+' '+t.getUTCDate()+' '+mon[t.getUTCMonth()];
+var g=d.querySelector('.go');if(g)g.remove();a.replaceWith(d);});})();
+</script>
 </body>
 </html>

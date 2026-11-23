@@ -213,7 +213,7 @@ body.embed .signup{display:none}
         </div>
         <div>
           <h3>Dates and outcomes</h3>
-          <p>Each application appears in the month it was validated, not the month it was decided. The outcome is its status on the register now, so recent months include applications still pending.</p>
+          <p>Each application appears in the month it was validated, not the month it was decided. The outcome is its status on the register, checked again on 23 November 2026, so recent months include applications still pending.</p>
         </div>
         <div>
           <h3>Locations</h3>
@@ -239,7 +239,7 @@ body.embed .signup{display:none}
   <div><h2>More from The Quarry</h2><p>These maps are made by <a href="https://www.thequarry.media/" style="color:inherit">The Quarry</a>, Guernsey's fearless, independent newsroom. We're reader-funded with no advertising. Subscribe to get each new map and our reporting in your inbox.</p></div>
   <a class="cta" href="https://www.thequarry.media/#/portal/signup" target="_blank" rel="noopener">Subscribe to The Quarry</a>
 </div></aside>
-<footer><div class="wrap">Data collected from the States of Guernsey planning register on 3 November 2026. Part of the <a href="../">Guernsey land use maps</a> from <a href="https://www.thequarry.media/">The Quarry</a>.</div></footer>
+<footer><div class="wrap">Data collected from the States of Guernsey planning register on 3 November 2026; outcomes checked on 23 November 2026. Part of the <a href="../">Guernsey land use maps</a> from <a href="https://www.thequarry.media/">The Quarry</a>.</div></footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -281,7 +281,7 @@ $('stats').innerHTML = [
   [nf(apps.length), 'applications since January 2015'],
   [nf(count('new')), 'for a new vehicle access'],
   [nf(apps.filter(a => a.tags.includes('hedge') || a.tags.includes('bank')).length), 'to remove a hedge or earth bank'],
-  [Math.round(per1000('2015')) + ' → ' + Math.round(per1000(peak)), `in every 1,000 planning applications, 2015 against ${peak}`]
+  [Math.round(per1000('2015')) + ' → ' + Math.round(per1000(fullYears[fullYears.length-1])), `in every 1,000 planning applications, 2015 against ${fullYears[fullYears.length-1]}`]
 ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
 const totalApps = Object.values(monthTotals).reduce((s, v) => s + v, 0);
 $('m-source').textContent = `The States planning register was searched month by month for every application validated from January 2015 to October 2026: ${nf(totalApps)} applications in all. ${nf(apps.length)} of them make at least one of the changes on this map.`;
@@ -414,7 +414,7 @@ mark('2016-11', 'Plan takes effect'); mark('2023-01', 'Review begins');
 $('lkey').innerHTML = TYPES.map(([t, l]) => `<span><i style="background:${TYPE_COLOUR[t]}"></i>${l}</span>`).join('');
 const r15 = t => rate('2015', t), rPeak = t => Math.max(...fullYears.map(y => rate(y, t)));
 const peakYear = t => fullYears.reduce((b, y) => rate(y, t) > rate(b, t) ? y : b, fullYears[0]);
-$('chartlead').textContent = `Applications of each type per 1,000 planning applications, so the lines aren't skewed by the overall number of applications rising and falling. Widened or altered accesses went from ${r15('altered').toFixed(0)} in every 1,000 applications in 2015 to ${rPeak('altered').toFixed(0)} in ${peakYear('altered')}, and new accesses from ${r15('new').toFixed(0)} to ${rPeak('new').toFixed(0)} in ${peakYear('new')}. Hedge removals peaked in ${peakYear('hedge')}. *2026 runs to October.`;
+$('chartlead').textContent = `Applications of each type per 1,000 planning applications, so the lines aren't skewed by the overall number of applications rising and falling. Widened or altered accesses went from ${r15('altered').toFixed(0)} in every 1,000 applications in 2015 to a peak of ${rPeak('altered').toFixed(0)} in ${peakYear('altered')}, and new accesses from ${r15('new').toFixed(0)} to a peak of ${rPeak('new').toFixed(0)} in ${peakYear('new')}. Hedge removals peaked in ${peakYear('hedge')}. *2026 runs to October.`;
 
 // ---------- parish table ----------
 const byP = {};

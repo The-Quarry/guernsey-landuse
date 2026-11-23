@@ -7,7 +7,7 @@ Live at https://landuse.thequarry.media
 | Path | Map |
 |---|---|
 | `/` | Series index |
-| `/fields/` | Fields into gardens: 830 applications to turn fields or farmland into garden |
+| `/fields/` | Fields into gardens: 828 applications to turn fields or farmland into garden |
 | `/access/` | Hedges, banks and driveways: 2,132 applications for vehicle accesses and hedge or earth bank removal |
 | `/pipeline/` | The housing pipeline: the 67 Housing Site Availability Framework sites with stages and planning history |
 | `/oldbuildings/` | New homes from old buildings: 223 applications to turn packing sheds, barns and outbuildings into homes |
