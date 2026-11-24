@@ -27,6 +27,10 @@ input[type=range]:focus-visible + .knob{outline:3px solid #2f6bd6;outline-offset
 .cap b{color:var(--ink);font-weight:600}
 .attr{font-size:11.5px;color:var(--muted);padding:2px 2px 0}
 @media (max-width:420px){.cap{padding:8px 12px 0}.attr{padding:2px 12px 0}}
+.oattr{position:absolute;right:6px;bottom:5px;padding:1px 6px;border-radius:2px;background:rgba(20,20,18,.7);color:#fff;font-size:10.5px;pointer-events:none}
+body.embed .wrap{max-width:none;padding:0}
+body.embed .cap,body.embed .attr{display:none}
+body.embed .cmp{aspect-ratio:auto;height:100vh}
 </style>
 </head>
 <body>
@@ -38,11 +42,13 @@ input[type=range]:focus-visible + .knob{outline:3px solid #2f6bd6;outline-offset
     <span class="tag l">2014</span><span class="tag r">August 2026</span>
     <input type="range" min="0" max="100" value="50" step="1" aria-label="Drag to compare 2014 (left) with August 2026 (right)">
     <div class="knob" aria-hidden="true">&#8596;</div>
+    <span class="oattr">Imagery: Google Earth</span>
   </div>
   <div class="cap"><b>Two Acres, La Planque Lane, Forest.</b> Proposed by the States as a site for affordable housing. A pending planning application seeks to turn agricultural land there into garden and demolish the glasshouses.</div>
   <div class="attr">Imagery: Google Earth, &copy; 2026 Google. Images aligned and cropped by The Quarry.</div>
 </div>
 <script>
+if(/[?&]embed/.test(location.search))document.body.classList.add('embed');
 (function(){var c=document.getElementById('cmp'),r=c.querySelector('input');
 function set(v){c.style.setProperty('--pos',v+'%');}
 r.addEventListener('input',function(){set(r.value);});
