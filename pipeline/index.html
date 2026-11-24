@@ -111,6 +111,10 @@ footer .wrap{padding-block:18px 30px;border-top:1px solid var(--line);font-size:
 .leaflet-control-zoom a{color:var(--ink)!important;background:var(--panel)!important}
 body.embed .mast,body.embed section,body.embed footer{display:none}
 body.embed main .wrap{padding-block:10px}
+body.embed #map{height:480px;min-height:0;max-height:none;aspect-ratio:auto}
+body.embed #card{order:-1}
+body.embed .side{display:flex;flex-direction:column}
+body.embed #card ~ .panel{display:none}
 .fullpage{display:none;font-size:13px;font-weight:600}
 body.embed .fullpage{display:inline}
 .card .desc{margin:6px 0 8px;font-size:13.5px}
@@ -268,6 +272,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;
 let embedded = new URLSearchParams(location.search).has('embed');
 try { embedded = embedded || window.self !== window.top; } catch (e) { embedded = true; }
 document.body.classList.toggle('embed', embedded);
+if (embedded && window.parent !== window) { const post = () => { try { parent.postMessage({quarryEmbed: location.pathname, height: Math.ceil(document.body.getBoundingClientRect().height)}, '*'); } catch (e) {} }; new ResizeObserver(post).observe(document.body); addEventListener('load', post); }
 const nf = n => n.toLocaleString('en-GB');
 const monthName = k => { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 15).toLocaleDateString('en-GB', {month:'short', year:'numeric'}); };
 const dateName = k => k ? new Date(k).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'}) : '';
