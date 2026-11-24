@@ -13,7 +13,7 @@
 :root[data-theme="dark"]{--ink:#ededE6;--muted:#b7b7ad;--bg:#141412}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,system-ui,sans-serif}
-.wrap{max-width:900px;margin:0 auto;padding:0 0 8px}
+.wrap{max-width:900px;margin:0 auto;padding:0 0 4px}
 .cmp{position:relative;width:100%;aspect-ratio:1600/923;overflow:hidden;background:#222;user-select:none;touch-action:pan-y}
 .cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .cmp .before{clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
@@ -46,7 +46,9 @@ input[type=range]:focus-visible + .knob{outline:3px solid #2f6bd6;outline-offset
 (function(){var c=document.getElementById('cmp'),r=c.querySelector('input');
 function set(v){c.style.setProperty('--pos',v+'%');}
 r.addEventListener('input',function(){set(r.value);});
-set(r.value);})();
+set(r.value);
+if(window.parent!==window){var post=function(){try{parent.postMessage({quarryEmbed:location.pathname,height:Math.ceil(document.body.getBoundingClientRect().height)},'*');}catch(e){}};new ResizeObserver(post).observe(document.body);addEventListener('load',post);}
+})();
 </script>
 </body>
 </html>
