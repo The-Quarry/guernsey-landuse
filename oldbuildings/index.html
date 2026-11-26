@@ -198,7 +198,7 @@ body.embed .signup{display:none}
 
     <section>
       <h2>Where the changes are</h2>
-      <p class="lead">Applications granted since the Island Development Plan took effect (November 2016 onwards), by parish, with the number of homes they allow. Most are in the north, where the island's vineries were concentrated.</p>
+      <p class="lead">Applications granted since the Island Development Plan took effect (November 2016 onwards), by parish, with the number of homes they allow, counting each site once. Most are in the north, where the island's vineries were concentrated.</p>
       <table class="ptable" id="ptable"></table>
     </section>
 
@@ -208,12 +208,12 @@ body.embed .signup{display:none}
         <div>
           <h3>The applications</h3>
           <p id="m-source"></p>
-          <p>Each description was read for two kinds of change: converting an existing building that was not a home (a packing shed, barn, stable, store or outbuilding) into one or more homes, and demolishing such a building to put up a house or flats in its place. Building a new house next to a working shed, converting an outbuilding into an annexe for an existing house, and replacing one house with another are all left out. Amendments to earlier approvals are left out so the same scheme isn't counted twice. Former hotels and self-catering units are left out here; they will have a map of their own.</p>
+          <p>Each description was read for two kinds of change: converting an existing building that was not a home (a packing shed, barn, stable, store or outbuilding) into one or more homes, and demolishing such a building to put up a house or flats in its place. Building a new house next to a working shed, converting an outbuilding into an annexe for an existing house, and replacing one house with another are all left out. Amendments to earlier approvals are left out so the same scheme isn't counted twice. Where a conversion was approved and a later application sought to knock the building down and build new instead, the later application is listed on the conversion's card rather than counted again: <span id="m-later"></span> Former hotels and self-catering units are left out here; they will have a map of their own.</p>
           <p>The sorting is done on the wording of each description. A random check of 25 included applications found one that may not belong (a boiler house converted to a store as part of a wider scheme). Treat individual counts as close rather than exact.</p>
         </div>
         <div>
           <h3>Homes</h3>
-          <p>The number of homes comes from the description where it gives one ("convert agricultural building to 4 dwellings"). Where it doesn't, the application is counted as one home. A permission is not proof the home was built: some lapse, and the same site often appears more than once as schemes are revised.</p>
+          <p>The number of homes comes from the description where it gives one ("convert agricultural building to 4 dwellings"). Where it doesn't, the application is counted as one home. Many sites were approved more than once, as schemes were revised or a conversion was replaced by a rebuild, so homes are counted once per site, using the largest number approved there. <span id="m-homes"></span> Sites are matched on the land parcels listed against each application, so neighbouring buildings on one parcel count as one site. A permission is not proof the home was built.</p>
         </div>
         <div>
           <h3>Dates and outcomes</h3>
@@ -227,6 +227,7 @@ body.embed .signup{display:none}
           <h3>Sources</h3>
           <ol class="sources">
             <li><a href="data/new-homes-from-old-buildings-2015-2026.csv" download>Download the data (CSV)</a></li>
+            <li><a href="data/later-demolish-and-rebuild.csv" download>Later demolish-and-rebuild applications (CSV)</a></li>
             <li>States of Guernsey planning register, <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet" target="_blank" rel="noopener">Planning Applications Websearch</a></li>
             <li>States of Guernsey Digimap: planning site boundaries and land parcels</li>
             <li><a href="https://guernseypress.com/news/2018/08/16/appeal-fails-but-redundant-glasshouses-to-be-re-defined" target="_blank" rel="noopener">Appeal fails but redundant glasshouses to be re-defined</a>, Guernsey Press, 16 Aug 2018</li>
@@ -284,16 +285,21 @@ const granted = apps.filter(a => a.o === 'g').length, decided = apps.filter(a =>
 const count = t => apps.filter(a => a.tags.includes(t)).length;
 const pre = apps.filter(a => a.m < IDP), post = apps.filter(a => a.m >= IDP && a.m < '2018-09');
 const refusedPct = Math.round(100 * apps.filter(a => a.o === 'r').length / decided);
-const homes = apps.filter(a => a.o === 'g').reduce((s, a) => s + a.u, 0);
+const siteHomes = list => { const m = {}; for (const a of list) if (a.o === 'g') m[a.sid] = Math.max(m[a.sid] || 0, a.u); return [Object.values(m).reduce((s, v) => s + v, 0), Object.keys(m).length]; };
+const permHomes = apps.filter(a => a.o === 'g').reduce((s, a) => s + a.u, 0);
+const [homes, homeSites] = siteHomes(apps);
 $('stats').innerHTML = [
   [nf(apps.length), 'applications since January 2015'],
-  [nf(homes), 'homes granted'],
+  [nf(homes), `homes approved on ${homeSites} sites, counting each site once`],
   [pre.length + ' → ' + post.length, 'in the 22 months before the 2016 plan, and the 22 after'],
   [refusedPct + '%', 'of decided applications refused']
 ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
 const totalApps = Object.values(monthTotals).reduce((s, v) => s + v, 0);
 $('m-source').textContent = `The States planning register was searched month by month for every application validated from January 2015 to October 2026: ${nf(totalApps)} applications in all. ${nf(apps.length)} of them turn an old building into one or more homes, or replace one with a house.`;
 const nb = apps.filter(a => a.src === 'b').length, np = apps.filter(a => a.src === 'p').length, nn = apps.filter(a => !a.lat).length;
+$('m-homes').textContent = `Added up application by application, the ${nf(apps.filter(a => a.o === 'g').length)} permissions cover ${nf(permHomes)} homes.`;
+const laterSites = apps.filter(a => a.later && a.later.some(l => l.o === 'g')).length;
+$('m-later').textContent = `${laterSites} sites where a conversion was approved later won permission to demolish and rebuild. The description of the later application usually does not say what the building was, so these were found by matching the property.`;
 $('m-loc').textContent = `From 2020 the States draw a site boundary for each application, and ${nf(nb)} dots sit at the centre of that boundary, which is drawn when you select one. Before 2020 there are no boundaries, so ${nf(np)} dots sit at the centre of the land parcel or parcels listed against the property. A dot marks the property, not the exact building.${nn ? ` ${nn} applications could not be placed.` : ''}`;
 
 // ---------- map ----------
@@ -384,6 +390,7 @@ function select(a){
       <dt>What</dt><dd>${a.tags.map(t => TAGTEXT[t]).filter(Boolean).join('; ')}</dd>
       <dt>Homes</dt><dd>${a.u}</dd>
       ${a.garden ? '<dt>Also</dt><dd>Also turns farmland into garden (on the <a href="../fields/">fields map</a>)</dd>' : ''}
+      ${a.later ? `<dt>Later</dt><dd>${a.later.map(l => `<a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${l.pk}" target="_blank" rel="noopener">${esc(l.ref)}</a> (${monthName(l.m)}, ${({g:'granted', r:'refused', w:'withdrawn', p:'pending'})[l.o]}): ${esc(l.d)}`).join('<br>')}</dd>` : ''}
       <dt>Placed by</dt><dd>${a.src === 'b' ? 'States site boundary, outlined on the map' : 'Land parcel for the property'}</dd>
     </dl>
     <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">Full application on the States planning register</a>
@@ -395,7 +402,7 @@ function select(a){
 const moments = [
   ['2016-11', 'The Island Development Plan takes effect', 'The new plan sets out when redundant buildings and glasshouse sites outside the main centres can be reused. Applications to convert old buildings double over the following two years.', 'Collas Crill'],
   ['2018-08', 'Tribunal rules on a redundant vinery', 'An appeal over industrial units on Dolphin Vinery in the Vale fails because the cleared site would contribute to open land. The planning director says the definition of a redundant glasshouse will be clarified.', 'Guernsey Press, 16 Aug 2018'],
-  ['2022-08', 'Bordeaux Vinery outbuildings', 'With the glasshouses cleared, plans go in to turn the remaining block outbuildings at Bordeaux Vinery into five one-bedroom homes. A scheme to replace them with five new houses follows in 2025.', 'Guernsey Press, 20 Aug 2022'],
+  ['2022-08', 'Bordeaux Vinery outbuildings', 'With the glasshouses cleared, plans go in to turn the remaining block outbuildings at Bordeaux Vinery into five one-bedroom homes. A scheme to replace them with five new houses is approved in 2023.', 'Guernsey Press, 20 Aug 2022'],
   ['2023-01', 'The plan\'s review begins', 'The Development & Planning Authority launches its review of the Island Development Plan.', 'Collas Crill'],
   ['2023-04', 'Call to free derelict glasshouse sites', 'Deputy Steve Falla asks the States to ease the rules on building homes on former vineries, citing 75.5 hectares of derelict glass. The planning president urges caution.', 'Guernsey Press, 14 Apr 2023']
 ];
@@ -425,7 +432,8 @@ $('chartlead').textContent = `Applications registered each year. Conversions mak
 
 // ---------- parish table ----------
 const byP = {};
-for (const a of since) { if (a.o !== 'g') continue; const p = a.parish || 'Not known'; const o = (byP[p] ||= {n: 0, new: 0, hedge: 0}); o.n++; o.new += a.u; if (a.tags.includes('vinery')) o.hedge++; }
+for (const a of since) { if (a.o !== 'g') continue; const p = a.parish || 'Not known'; const o = (byP[p] ||= {n: 0, new: 0, hedge: 0, s: {}}); o.n++; o.s[a.sid] = Math.max(o.s[a.sid] || 0, a.u); if (a.tags.includes('vinery')) o.hedge++; }
+for (const o of Object.values(byP)) o.new = Object.values(o.s).reduce((s, v) => s + v, 0);
 const pRows = Object.entries(byP).sort((a, b) => b[1].n - a[1].n);
 const pMax = pRows[0][1].n;
 $('ptable').innerHTML = '<tr><th>Parish</th><th style="text-align:right">Granted</th><th style="text-align:right">Homes</th><th style="text-align:right">Vinery buildings</th><th></th></tr>' +
