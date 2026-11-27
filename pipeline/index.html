@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Guernsey housing pipeline | The Quarry</title>
-<meta name="description" content="The 67 sites in the States of Guernsey Housing Site Availability Framework, their 1,741 potential homes, how far each has got and its planning history, plus the nine sites designated for affordable homes on 24 November 2026.">
+<meta name="description" content="The 2,008 potential homes in Guernsey's housing pipeline: the 67 sites in the States Housing Site Availability Framework with their stage and planning history, plus the nine sites designated for affordable homes on 24 November 2026.">
 <meta property="og:title" content="Guernsey housing pipeline">
-<meta property="og:description" content="Where the 1,741 homes in the States housing pipeline stand, site by site.">
+<meta property="og:description" content="Where the 2,008 homes in Guernsey's housing pipeline stand, site by site, including the nine sites designated this week.">
 <link rel="canonical" href="https://landuse.thequarry.media/pipeline/">
 <meta property="og:url" content="https://landuse.thequarry.media/pipeline/">
 <meta property="og:site_name" content="The Quarry">
-<meta property="og:image" content="https://landuse.thequarry.media/og/pipeline-v2.png">
+<meta property="og:image" content="https://landuse.thequarry.media/og/pipeline-v3.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://landuse.thequarry.media/og/pipeline-v2.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Guernsey housing pipeline", "description": "The 67 sites and 1,741 potential homes in the States of Guernsey Housing Site Availability Framework, how far each has got and the planning applications behind it.", "url": "https://landuse.thequarry.media/pipeline/", "creator": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "isPartOf": {"@type": "CollectionPage", "name": "Guernsey land use maps", "url": "https://landuse.thequarry.media/"}, "spatialCoverage": {"@type": "Place", "name": "Guernsey"}, "temporalCoverage": "2025-07/2026-03", "isBasedOn": ["States of Guernsey Housing Site Availability Framework 2026", "States of Guernsey planning register", "States of Guernsey Digimap"], "inLanguage": "en-GB", "dateModified": "2026-11-27", "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://landuse.thequarry.media/pipeline/data/housing-pipeline-2026-03.csv"}]}</script>
+<meta name="twitter:image" content="https://landuse.thequarry.media/og/pipeline-v3.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Guernsey housing pipeline", "description": "The 2,008 potential homes in Guernsey's housing pipeline: 67 sites and 1,741 homes in the States of Guernsey Housing Site Availability Framework, plus 267 on nine sites designated on 24 November 2026; how far each has got and the planning applications behind it.", "url": "https://landuse.thequarry.media/pipeline/", "creator": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "isPartOf": {"@type": "CollectionPage", "name": "Guernsey land use maps", "url": "https://landuse.thequarry.media/"}, "spatialCoverage": {"@type": "Place", "name": "Guernsey"}, "temporalCoverage": "2025-07/2026-03", "isBasedOn": ["States of Guernsey Housing Site Availability Framework 2026", "States of Guernsey planning register", "States of Guernsey Digimap"], "inLanguage": "en-GB", "dateModified": "2026-11-27", "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://landuse.thequarry.media/pipeline/data/housing-pipeline-2026-03.csv"}]}</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
@@ -45,7 +45,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .stand{max-width:62ch;font-size:16px;margin:0}
 .stats{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:6px}
 .stat b{display:block;font:700 28px/1.1 var(--display);font-variant-numeric:tabular-nums}
-.stat span{font-size:13px}
+.stat span{font-size:13px;display:block;max-width:220px}
 main .wrap{padding-block:22px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:34px}
 .bench{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 @media (max-width:860px){.bench{grid-template-columns:minmax(0,1fr)}}
@@ -316,10 +316,10 @@ const noPerm = uAt(2, s => s <= 3);
 const affU = sites.filter(s => /afford/i.test(s.tenure) && !/mixed/i.test(s.tenure)).reduce((a, s) => a + units(s), 0);
 const movedF = sites.filter(s => RANK[s.st[2]] > RANK[s.st[0]]);
 $('stats').innerHTML = [
-  [nf(tot), `potential homes on ${sites.length} sites`],
+  [nf(tot + DS.reduce((a, s) => a + s.units, 0)), `potential homes on ${sites.length + DS.length} sites, ${nf(DS.reduce((a, s) => a + s.units, 0))} of them designated this week`],
   [nf(building), 'under construction in March 2026'],
-  [nf(noPerm), 'on sites without planning permission'],
-  [movedF.length + ' of ' + sites.length, 'sites moved forward a stage in six months']
+  [nf(noPerm), 'framework homes without planning permission in March'],
+  [movedF.length + ' of ' + sites.length, 'framework sites moved forward a stage in six months']
 ].map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join('');
 
 // ---------- map ----------
