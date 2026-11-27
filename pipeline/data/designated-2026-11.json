@@ -1,0 +1,168 @@
+{
+ "date": "2026-11-24",
+ "source": "States of Deliberation, Island Development Plan review, 24 November 2026; DPA estimates of affordable homes; sites located from the Draft IDP (Review 1, 2026) Proposals Map",
+ "items": [
+  {
+   "id": "whispers",
+   "name": "Whispers Vinery",
+   "addr": "Rue des Goddards, Castel",
+   "units": 40,
+   "vote": "23–10",
+   "prop": "P1",
+   "lat": 49.4693,
+   "lng": -2.6035,
+   "land": "House and former horticultural land",
+   "note": "Voted on together with the new Vazon local centre, the closest of the site votes. The inspector recommended against both. The DPA's own amendment to cap the site at 40 homes, against an assessed capacity of 53, was lost by 24 votes to 6.",
+   "apps": []
+  },
+  {
+   "id": "school-lane",
+   "name": "School Lane Vinery",
+   "addr": "Rue de la Vallée, St Martin's",
+   "units": 40,
+   "vote": "32–1",
+   "prop": "P5",
+   "lat": 49.4346,
+   "lng": -2.5545,
+   "land": "Part glasshouse and open land, part brownfield",
+   "note": "",
+   "apps": []
+  },
+  {
+   "id": "regency",
+   "name": "Regency Vinery",
+   "addr": "Steam Mill Lane, St Martin's",
+   "units": 39,
+   "vote": "27–5",
+   "prop": "P3",
+   "lat": 49.4443,
+   "lng": -2.5543,
+   "land": "Former vinery, partly used for storage",
+   "note": "",
+   "apps": []
+  },
+  {
+   "id": "route-carre",
+   "name": "Former Fletcher's Freesias",
+   "addr": "Route Carré, St Sampson's",
+   "units": 32,
+   "vote": "28–4",
+   "prop": "P4",
+   "lat": 49.4861,
+   "lng": -2.5437,
+   "land": "Former horticulture",
+   "note": "",
+   "apps": []
+  },
+  {
+   "id": "selbourne",
+   "name": "Selbourne Vinery",
+   "addr": "Route des Coutanchez, St Peter Port",
+   "units": 31,
+   "vote": "30–3",
+   "prop": "P6",
+   "lat": 49.4692,
+   "lng": -2.548,
+   "land": "Open land",
+   "note": "",
+   "apps": []
+  },
+  {
+   "id": "two-acres",
+   "name": "Two Acres",
+   "addr": "La Planque Lane, Forest",
+   "units": 26,
+   "vote": "28–4",
+   "prop": "P7",
+   "lat": 49.4308,
+   "lng": -2.6031,
+   "land": "House and former horticultural land",
+   "note": "An amendment to cap the site at 15 homes was lost by 23 votes to 6. A pending application seeks to turn 4,114 sqm of agricultural land at Two Acres into garden and demolish the glasshouses; how far that overlaps the designated site has not been confirmed.",
+   "apps": [
+    {
+     "ref": "FULL/2020/0520",
+     "m": "2020-03",
+     "o": "g",
+     "pk": "188843",
+     "d": "Change of use of agricultural land to domestic garden."
+    },
+    {
+     "ref": "FULL/2026/1331",
+     "m": "2026-08",
+     "o": "p",
+     "pk": "213633",
+     "d": "Change of use of agricultural land to domestic garden (4,114sqm), demolish glasshouses and outbuildings and associated works."
+    }
+   ]
+  },
+  {
+   "id": "springhurst",
+   "name": "Springhurst House",
+   "addr": "Le Bourg, Forest",
+   "units": 22,
+   "vote": "32–1",
+   "prop": "P8",
+   "lat": 49.4317,
+   "lng": -2.5897,
+   "land": "House and commercial building, with open land to the west",
+   "note": "Added on the inspector's recommendation.",
+   "apps": [
+    {
+     "ref": "FULL/2023/1615",
+     "m": "2023-09",
+     "o": "r",
+     "pk": "201984",
+     "d": "Convert existing building to 3 dwellings with associated works and widen vehicle access."
+    },
+    {
+     "ref": "FULL/2024/0970",
+     "m": "2024-06",
+     "o": "g",
+     "pk": "204927",
+     "d": "Convert existing building to 2 dwellings with associated works and widen vehicle access (revised scheme)."
+    }
+   ]
+  },
+  {
+   "id": "sandy-hook",
+   "name": "Land at Sandy Hook",
+   "addr": "L'Islet, St Sampson's",
+   "units": 22,
+   "vote": "22–9",
+   "prop": "P9",
+   "lat": 49.4896,
+   "lng": -2.5435,
+   "land": "Open land",
+   "note": "Added on the inspector's recommendation.",
+   "apps": []
+  },
+  {
+   "id": "les-caches-farm",
+   "name": "Les Caches Farm",
+   "addr": "Rue des Caches, St Pierre du Bois",
+   "units": 15,
+   "vote": "30–3",
+   "prop": "P2",
+   "lat": 49.4355,
+   "lng": -2.6238,
+   "land": "House and camp site",
+   "note": "",
+   "apps": [
+    {
+     "ref": "FULL/2022/1079",
+     "m": "2022-06",
+     "o": "g",
+     "pk": "196526",
+     "d": "Change of use of agricultural land to domestic curtilage (2,300sqm); remove hedging, erect polytunnel, fruit cages, fencing and compost bins (revised scheme)."
+    },
+    {
+     "ref": "FULL/2022/1182",
+     "m": "2022-07",
+     "o": "g",
+     "pk": "196673",
+     "d": "Change of use of agricultural land (Use Class 28) to camp site, including installation of 9 glamping units with associated landscaping and parking, create vehicular access to north boundary, extend and alter barn 'A' (northern barn) to provide facilities block, including the provision of wellbeing activities, and use of area of domestic curtilage for the provision of outdoor wellbeing activities (Protected Building)."
+    }
+   ]
+  }
+ ]
+}

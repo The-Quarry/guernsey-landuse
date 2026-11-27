@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Guernsey housing pipeline | The Quarry</title>
-<meta name="description" content="The 67 sites in the States of Guernsey Housing Site Availability Framework, their 1,741 potential homes, how far each has got and its planning history.">
+<meta name="description" content="The 67 sites in the States of Guernsey Housing Site Availability Framework, their 1,741 potential homes, how far each has got and its planning history, plus the nine sites designated for affordable homes on 24 November 2026.">
 <meta property="og:title" content="Guernsey housing pipeline">
 <meta property="og:description" content="Where the 1,741 homes in the States housing pipeline stand, site by site.">
 <link rel="canonical" href="https://landuse.thequarry.media/pipeline/">
@@ -14,7 +14,7 @@
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://landuse.thequarry.media/og/pipeline-v2.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Guernsey housing pipeline", "description": "The 67 sites and 1,741 potential homes in the States of Guernsey Housing Site Availability Framework, how far each has got and the planning applications behind it.", "url": "https://landuse.thequarry.media/pipeline/", "creator": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "isPartOf": {"@type": "CollectionPage", "name": "Guernsey land use maps", "url": "https://landuse.thequarry.media/"}, "spatialCoverage": {"@type": "Place", "name": "Guernsey"}, "temporalCoverage": "2025-07/2026-03", "isBasedOn": ["States of Guernsey Housing Site Availability Framework 2026", "States of Guernsey planning register", "States of Guernsey Digimap"], "inLanguage": "en-GB", "dateModified": "2026-11-03", "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://landuse.thequarry.media/pipeline/data/housing-pipeline-2026-03.csv"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Dataset", "name": "Guernsey housing pipeline", "description": "The 67 sites and 1,741 potential homes in the States of Guernsey Housing Site Availability Framework, how far each has got and the planning applications behind it.", "url": "https://landuse.thequarry.media/pipeline/", "creator": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "publisher": {"@type": "NewsMediaOrganization", "name": "The Quarry", "url": "https://www.thequarry.media/"}, "isPartOf": {"@type": "CollectionPage", "name": "Guernsey land use maps", "url": "https://landuse.thequarry.media/"}, "spatialCoverage": {"@type": "Place", "name": "Guernsey"}, "temporalCoverage": "2025-07/2026-03", "isBasedOn": ["States of Guernsey Housing Site Availability Framework 2026", "States of Guernsey planning register", "States of Guernsey Digimap"], "inLanguage": "en-GB", "dateModified": "2026-11-27", "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://landuse.thequarry.media/pipeline/data/housing-pipeline-2026-03.csv"}]}</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
@@ -127,6 +127,7 @@ body.embed .fullpage{display:inline}
 #chart .ln{fill:none;stroke-width:2.5}
 .lkey{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 8px}
 .lkey i{display:inline-block;width:18px;height:3px;vertical-align:4px;margin-right:6px;border-radius:2px}
+.des{--c:#a24ea8}
 .st1{--c:#a9a796}.st2{--c:#d6a93c}.st3{--c:#e07f35}.st5{--c:#4f87c4}.st4{--c:#2f5f9e}.st6{--c:#60A07D}.st7{--c:#2f6b4c}
 .pill{display:inline-flex;align-items:center;gap:6px;font:500 12.5px var(--body);border-radius:999px;padding:3px 10px;background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid var(--c);color:var(--ink);white-space:nowrap}
 .pill i{width:8px;height:8px;border-radius:50%;background:var(--c)}
@@ -168,7 +169,7 @@ body.embed .signup{display:none}
   <div class="wrap">
     <div class="eyebrow"><a class="series" href="../">The Quarry · Guernsey land use</a></div>
     <h1>The housing pipeline</h1>
-    <p class="stand">Every site in the States of Guernsey's Housing Site Availability Framework, how far it had got by March 2026, and the planning applications behind it.</p>
+    <p class="stand">Every site in the States of Guernsey's Housing Site Availability Framework, how far it had got by March 2026, and the planning applications behind it. Plus the nine sites the States designated for affordable homes on 24 November 2026.</p>
     <div class="stats" id="stats"></div>
   </div>
 </header>
@@ -195,6 +196,7 @@ body.embed .signup{display:none}
             <button type="button" data-t="aff" aria-pressed="false">Affordable or mixed</button>
             <button type="button" data-t="Private" aria-pressed="false">Private</button>
           </div>
+          <div class="seg" role="group" aria-label="Designated sites" id="desg"><button type="button" aria-pressed="true" id="destog"><i class="des" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:6px;outline:1.5px dashed currentColor;outline-offset:1px"></i>Designated 24 Nov 2026 <span id="desn"></span></button></div>
           <p class="count" id="countline"></p>
           <p class="count" style="margin:0">Circle size shows the number of homes. Sites without a figure are drawn small.</p>
         </div>
@@ -223,12 +225,22 @@ body.embed .signup{display:none}
     </section>
 
     <section>
+      <h2>Designated this week</h2>
+      <p class="lead" id="deslead"></p>
+      <div class="tablewrap"><table class="ptable" id="dessites"></table></div>
+    </section>
+
+    <section>
       <h2>How this map was made</h2>
       <div class="method">
         <div>
           <h3>The sites</h3>
           <p>The States published its first Housing Site Availability Framework in March 2026. It lists 67 sites with their location area, landowner, tenure, number of homes, permission dates, and a stage for three dates: Q3 2025, Q4 2025 and the time of publication. The framework is meant to be updated twice a year; this map uses the first edition.</p>
           <p>The stages are the framework's own: potential site, planning work ongoing, planning application ready, permission granted, post-planning and pre-construction, construction underway, and construction complete. A permission counts as valid for three years.</p>
+        </div>
+        <div>
+          <h3>Sites designated on 24 November</h3>
+          <p>The nine sites in purple are not in the framework. The States designated them for affordable housing in the Island Development Plan review on 24 November 2026, after the framework was published, so they are shown separately and are not counted in the framework's totals. Homes are the Development &amp; Planning Authority's estimates. Each site is placed at the centre of its allocation on the Proposals Map published with the review. Planning applications are listed only where The Quarry has matched them to the site.</p>
         </div>
         <div>
           <h3>Planning history</h3>
@@ -247,6 +259,9 @@ body.embed .signup{display:none}
           <h3>Sources</h3>
           <ol class="sources">
             <li><a href="data/housing-pipeline-2026-03.csv" download>Download the data (CSV)</a></li>
+            <li><a href="data/designated-sites-2026-11.csv" download>Download the designated sites (CSV)</a></li>
+            <li>States of Guernsey, Draft Island Development Plan (Review 1, 2026): Proposals Map and Revised Strategic Housing Land Availability Assessment</li>
+            <li><a href="https://statesvoting-records.gov.gg/Meetings/Details/87" target="_blank" rel="noopener">States voting records, 24 November 2026</a></li>
             <li>States of Guernsey, Housing Site Availability Framework 2026 (March 2026)</li>
             <li>States of Guernsey planning register, <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet" target="_blank" rel="noopener">Planning Applications Websearch</a></li>
             <li>States of Guernsey Digimap: planning site boundaries and land parcels</li>
@@ -279,6 +294,8 @@ const dateName = k => k ? new Date(k).toLocaleDateString('en-GB', {day:'numeric'
 
 const D = await fetch('data/pipeline-data.json').then(r => r.json());
 const sites = D.items;
+const DS = await fetch('data/designated-2026-11.json').then(r => r.json()).then(d => d.items).catch(() => []);
+let showDes = true;
 // display order runs from earliest to latest stage
 const ORDER = [1, 2, 3, 5, 4, 6, 7];
 const RANK = Object.fromEntries(ORDER.map((s, i) => [s, i]));
@@ -310,7 +327,7 @@ const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.docu
 const map = L.map('map', {zoomControl: false, zoomSnap: 0.5, minZoom: 11, maxZoom: 19}).fitBounds([[49.42, -2.66], [49.495, -2.505]]);
 L.control.zoom({position: 'topright'}).addTo(map);
 L.tileLayer(`https://basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}.png?key=cb1_4rrh_1_787f5809ade6f105fa27d8a3`, {
-  maxZoom: 19, attribution: '&copy; OpenStreetMap contributors &copy; CARTO | Sites: States of Guernsey Housing Site Availability Framework'}).addTo(map);
+  maxZoom: 19, attribution: '&copy; OpenStreetMap contributors &copy; CARTO | Sites: States of Guernsey Housing Site Availability Framework; Island Development Plan review'}).addTo(map);
 const z0 = map.getZoom();
 const zf = () => Math.pow(2, (map.getZoom() - z0) * 0.45);
 const baseR = s => s.units ? Math.max(4, Math.sqrt(s.units) * 1.7) : 3.5;
@@ -319,7 +336,14 @@ for (const s of sites) {
   s.node = L.circleMarker([s.lat, s.lng], {radius: baseR(s) * zf(), color: css('--bg'), weight: 1.2, fillOpacity: .85, bubblingMouseEvents: false})
     .bindTooltip(esc(s.name) + (s.units ? ` · ${s.units} homes` : ''), {direction: 'top'}).on('click', () => select(s));
 }
-map.on('zoomend', () => { for (const s of sites) s.node.setRadius(baseR(s) * zf()); });
+const dlayer = L.layerGroup().addTo(map);
+for (const s of DS) {
+  s.des = true;
+  s.node = L.circleMarker([s.lat, s.lng], {radius: baseR(s) * zf(), color: css('--ink'), weight: 1.5, dashArray: '3 2', fillColor: '#a24ea8', fillOpacity: .8, bubblingMouseEvents: false})
+    .bindTooltip(esc(s.name) + ` · ${s.units} homes · designated 24 Nov 2026`, {direction: 'top'}).on('click', () => select(s));
+  dlayer.addLayer(s.node);
+}
+map.on('zoomend', () => { for (const s of [...sites, ...DS]) s.node.setRadius(baseR(s) * zf()); });
 
 // ---------- filters ----------
 let snap = 2, stage = 0, tenure = '', sel = null;
@@ -338,12 +362,18 @@ function draw(){
   }
   // draw big circles underneath small ones
   sites.filter(s => layer.hasLayer(s.node)).sort((a, b) => units(b) - units(a)).forEach(s => s.node.bringToFront());
+  for (const s of DS) s.node.setStyle({weight: s === sel ? 3 : 1.5, dashArray: s === sel ? null : '3 2'});
+  if (showDes && !map.hasLayer(dlayer)) dlayer.addTo(map); else if (!showDes && map.hasLayer(dlayer)) map.removeLayer(dlayer);
+  if (showDes) dlayer.eachLayer(l => l.bringToFront());
   $('monthbig').innerHTML = `${SNAP[snap]}<small>stage shown for each site</small>`;
-  $('countline').innerHTML = `<b>${n}</b> sites with <b>${nf(u)}</b> potential homes`;
+  $('countline').innerHTML = `<b>${n}</b> framework sites with <b>${nf(u)}</b> potential homes` + (showDes && DS.length ? `, plus <b>${DS.length}</b> designated sites with <b>${nf(DS.reduce((a, s) => a + s.units, 0))}</b> affordable homes` : '');
 }
 $('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; stage = +b.dataset.k; drawChips(); draw(); });
 $('snap').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; snap = +b.dataset.i; [...$('snap').children].forEach(x => x.setAttribute('aria-pressed', x === b)); if (stage && !sites.some(s => s.st[snap] === stage)) stage = 0; drawChips(); draw(); if (sel) select(sel, true); });
 $('ten').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; tenure = b.dataset.t; [...$('ten').children].forEach(x => x.setAttribute('aria-pressed', x === b)); draw(); });
+$('destog').addEventListener('click', () => { showDes = !showDes; $('destog').setAttribute('aria-pressed', showDes); draw(); });
+$('desn').textContent = DS.length;
+if (!DS.length) $('desg').hidden = true;
 drawChips();
 
 // ---------- card ----------
@@ -365,6 +395,23 @@ function select(s, quiet){
   $('back').hidden = false;
   sel = s; draw();
   if (!quiet) map.setView([s.lat, s.lng], Math.max(map.getZoom(), 16));
+  const hist = s.apps.length ? `<h3 style="font-size:14px">Planning history</h3><ul class="hist">${s.apps.slice().reverse().map(a => `<li class="${a.o}"><time>${monthName(a.m)}</time> · ${OUT[a.o]} · <a href="http://planningexplorer.gov.gg/portal/servlets/ApplicationSearchServlet?PKID=${a.pk}" target="_blank" rel="noopener">${a.ref}</a><br>${esc(a.d.length > 220 ? a.d.slice(0, 217) + '…' : a.d)}</li>`).join('')}</ul>` : '';
+  if (s.des) {
+    $('card').innerHTML = `<h3>${esc(s.name)}</h3>
+    <div class="track"><span class="pill des"><i></i>Designated by the States, 24 Nov 2026</span></div>
+    <dl>
+      <dt>Homes</dt><dd>${s.units} affordable (DPA estimate)</dd>
+      <dt>Vote</dt><dd>${esc(s.vote)}, proposition ${esc(s.prop.slice(1))}</dd>
+      <dt>Location</dt><dd>${esc(s.addr)}</dd>
+      <dt>Land</dt><dd>${esc(s.land)}</dd>
+    </dl>
+    ${s.note ? `<p style="margin:8px 0 0;font-size:13.5px">${esc(s.note)}</p>` : ''}
+    ${hist}
+    <p class="count">Not in the March 2026 framework.</p>
+    <button type="button" class="cardback">← Back to full map</button>`;
+    if (!quiet && matchMedia('(max-width:860px)').matches) $('card').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    return;
+  }
   const moved = RANK[s.st[2]] - RANK[s.st[0]];
   $('card').innerHTML = `<h3>${esc(s.name)}</h3>
     ${s.photo ? `<figure class="photo"><img src="${esc(s.photo.src)}" alt="${esc(s.photo.alt || s.name)}" loading="lazy"><figcaption>${esc(s.photo.caption || '')}</figcaption></figure>` : ''}
@@ -403,6 +450,15 @@ const sorted = sites.slice().sort((a, b) => units(b) - units(a) || a.name.locale
 $('sites').innerHTML = '<tr><th>Site</th><th style="text-align:right">Homes</th><th>Tenure</th><th>March 2026</th><th>Latest application</th></tr>' +
   sorted.map(s => { const a = s.apps[s.apps.length - 1]; return `<tr data-id="${s.id}"><td>${esc(s.name)}</td><td class="n">${s.units || '–'}</td><td>${esc(s.tenure)}</td><td class="st">${pill(s.st[2])}</td><td>${a ? `${monthName(a.m)}, ${OUT[a.o].toLowerCase()}` : '–'}</td></tr>`; }).join('');
 $('sites').addEventListener('click', e => { const r = e.target.closest('tr[data-id]'); if (!r) return; select(sites.find(x => x.id === r.dataset.id)); $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'}); });
+
+// ---------- designated ----------
+if (DS.length) {
+  const dsu = DS.reduce((a, s) => a + s.units, 0);
+  $('deslead').textContent = `On 24 November the States designated ${DS.length} sites for affordable housing in the Island Development Plan review, with an estimated ${nf(dsu)} homes between them. None is in the March 2026 framework. Tap a row to find it on the map.`;
+  $('dessites').innerHTML = '<tr><th>Site</th><th>Location</th><th style="text-align:right">Homes</th><th style="text-align:right">Vote</th></tr>' +
+    DS.slice().sort((a, b) => b.units - a.units).map(s => `<tr data-id="${s.id}"><td>${esc(s.name)}</td><td>${esc(s.addr)}</td><td class="n">${s.units}</td><td class="n">${esc(s.vote)}</td></tr>`).join('');
+  $('dessites').addEventListener('click', e => { const r = e.target.closest('tr[data-id]'); if (!r) return; if (!showDes) $('destog').click(); select(DS.find(x => x.id === r.dataset.id)); $('mapbox').scrollIntoView({behavior: 'smooth', block: 'start'}); });
+} else $('deslead').closest('section').hidden = true;
 
 const nApps = sites.reduce((a, s) => a + s.apps.length, 0), withApps = sites.filter(s => s.apps.length).length;
 $('m-hist').textContent = `Each site was matched to the States planning register through the site boundaries drawn under its location (from 2020) and the land parcel it sits on. Only applications that create, convert or redevelop homes, or demolish buildings to do so, are listed: ${nApps} applications across ${withApps} of the ${sites.length} sites.`;
