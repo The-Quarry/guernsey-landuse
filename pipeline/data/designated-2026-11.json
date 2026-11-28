@@ -104,24 +104,9 @@
    "prop": "P8",
    "lat": 49.4317,
    "lng": -2.5897,
-   "land": "House and commercial building, with open land to the west",
+   "land": "Part open land, part previously developed",
    "note": "Added on the inspector's recommendation.",
-   "apps": [
-    {
-     "ref": "FULL/2023/1615",
-     "m": "2023-09",
-     "o": "r",
-     "pk": "201984",
-     "d": "Convert existing building to 3 dwellings with associated works and widen vehicle access."
-    },
-    {
-     "ref": "FULL/2024/0970",
-     "m": "2024-06",
-     "o": "g",
-     "pk": "204927",
-     "d": "Convert existing building to 2 dwellings with associated works and widen vehicle access (revised scheme)."
-    }
-   ]
+   "apps": []
   },
   {
    "id": "sandy-hook",
